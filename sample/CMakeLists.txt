@@ -11,5 +11,6 @@ target_include_directories( drawLine PRIVATE "${CMAKE_CURRNET_SOURCE_DIR}"
                                              "${CMAKE_SOURCE_DIR}/third/glm"
                                              "${CMAKE_SOURCE_DIR}/third/glad"
                                              "${CMAKE_SOURCE_DIR}/third/glfw-3.2.1/include"  )
+
 target_link_libraries( drawLine PRIVATE BlowRender )
 set_target_properties( drawLine PROPERTIES FOLDER "Sample" )

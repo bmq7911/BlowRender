@@ -91,7 +91,6 @@ namespace gpc {
                 v1 = m_primitiveBuffer.at(m_index);
                 v2 = m_primitiveBuffer.at(m_index + 1);
                 v3 = m_primitiveBuffer.at(m_index + 2);
-
                 m_index += 3;
                 return true;
             }
@@ -102,7 +101,7 @@ namespace gpc {
     };
 
     template<typename V, typename _FI,typename I = uint32_t>
-    class VertexDispatch_trianglestrip : public VertexDispatch<V, I> {
+    class VertexDispatch_trianglestrip : public VertexDispatch<V,_FI, I> {
     public:
         VertexDispatch_trianglestrip()
             : m_index(0)

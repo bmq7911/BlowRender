@@ -18,8 +18,6 @@ void RayTraceBlowWindow::render(float passTime, float deltaTime)  {
 	auto fbo = getFbo( );
 	fbo->clear({ 255,255,255,0 });
 	
-    //m_pipeline->draw();
 	m_device->bindTaskIssue(m_pipeline);
 	m_device->wait();
-//	std::this_thread::sleep_for(std::chrono::milliseconds(50));
 }

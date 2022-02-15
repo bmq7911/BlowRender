@@ -25,8 +25,37 @@
 struct Vertex {
     glm::vec3 aPos;
     glm::vec3 aNormal;
-    glm::vec2 aTex;
+    glm::vec2 aTex;    
+    Vertex operator + (Vertex const& p) const {
+        Vertex t;
+        t.aNormal= this->aNormal + p.aNormal;
+        t.aPos = this->aPos + p.aPos;
+        t.aTex = this->aTex + p.aTex;
+        return t;
+    }
+    Vertex & operator+=(Vertex const& p) {
+        aNormal += p.aNormal;
+        aPos += p.aPos;
+        aTex += p.aTex;
+        return *this;
+    }
+    Vertex operator *(float k) const {
+        Vertex t;
+        t.aNormal = k * aNormal;
+        t.aPos = k * aPos;
+        t.aTex = k * aTex;
+        return t;
+    }
+    Vertex & operator*=(float k) {
+        aNormal *= k;
+        aPos *= k;
+        aTex *= k;
+        return *this;
+    }
 };
+static inline Vertex operator*(float k, Vertex const& p) {
+    return p * k;
+}
 
 struct ShaderPass {
     glm::vec3 Normal;
@@ -185,9 +214,14 @@ public:
     void drawOTree(gpc::OTree<gpc::Object<float>, float> const* tree);
     void processInput(float passTime, float deltaTime) override;
 private:
+    void _InitJuliaSence();
+private:
     std::shared_ptr<gpc::VertexBuffer<Vertex>> m_vertexBuffer;
     std::shared_ptr<gpc::VertexBuffer<Vertex>> m_vertexBufferLine;
+    std::shared_ptr<gpc::VertexBuffer<glm::vec2>> m_vertexJulia;
     std::shared_ptr<gpc::RasterizePipeline<Vertex, ShaderPass>> m_pipeline;
+    std::shared_ptr<gpc::RasterizePipeline<glm::vec2, glm::vec4>> m_juliaPipeline;
+
     std::shared_ptr<gpc::RasterizePipeline<helper::Vertex<float>, ShaderPass>> m_modelPipeline;
     std::shared_ptr<gpc::RasterizePipeline<glm::vec3, glm::vec3>> m_aabbPipeline;
 

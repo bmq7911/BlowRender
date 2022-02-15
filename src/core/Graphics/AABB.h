@@ -5,6 +5,7 @@
 #include "Ray.h"   
 #include "BFloat.h"
 namespace gpc {
+
 #define GET_SIGN_BIT(x) (((signed char*) &x)[sizeof(x) - 1] >> 7 | 1)
     template<typename T>
     bool is_same_sign(T v1, T v2, T v3) {

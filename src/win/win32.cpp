@@ -178,6 +178,7 @@ namespace win {
             LOG_TRACE("FPS = ", "%d and deltaTime  = %f renderTime = %lf", int32_t(1.0f / deltaTime), deltaTime,rt);
             BlowWindow::render( passTime , deltaTime);
         }
+        return;
     }
 
     bool BlowWindow::isKeyDown(uint32_t key) {

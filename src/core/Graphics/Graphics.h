@@ -422,8 +422,8 @@ namespace gpc {
             float tx = kM * x;
             float ty = kN * y;
             /// 能否避免取整这个操作
-            float ox = _Floor(tx, float_trait<T>::type());
-            float oy = _Floor(ty, float_trait<T>::type());
+            float ox = _Floor(tx,typename float_trait<T>::type());
+            float oy = _Floor(ty,typename float_trait<T>::type());
 
             float x12 = tx - ox;
             float x11 = 1 - x12;

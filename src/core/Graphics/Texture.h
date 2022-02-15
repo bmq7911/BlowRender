@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include <vector>
 #include "Graphics/Image.h"
 #include "glm/glm.hpp"
@@ -67,7 +68,7 @@ namespace gpc {
     private:
         glm::vec4 _at(int32_t x, int32_t y) const {
             x = std::max(0, std::min(x, m_iwidth - 1));
-            y = std::max(0, std::min(x, m_iheight - 1));
+            y = std::max(0, std::min(y, m_iheight - 1));
             glm::tvec4<byte> t = m_image.at(x, y);
             glm::vec4 c;
             c.x = t.x / 255.0f;

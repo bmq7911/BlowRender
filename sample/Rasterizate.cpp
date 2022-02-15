@@ -1,6 +1,129 @@
 #include <iostream>
 #include "Rasterizate.h"
 
+class JuliaVertexShader : public gpc::VertexShader<glm::vec2, glm::vec4> {
+public:
+    glm::vec4 execute(glm::vec2 const& vertex, glm::vec4 & out) {
+        out.x = vertex.x;
+        out.y = vertex.y;
+        out.z = 0.0f;
+        out.w = 1.0f;
+        return out;
+    }
+};
+
+template<typename T>
+class C {
+public:
+
+    template<typename T>
+    friend C<T> operator* (C<T> const& c1, C<T> const& c2);
+    template<typename T>
+    friend C<T> operator* ( T const& v, C<T> const& c );
+    template<typename T>
+    friend C<T> operator+(C<T> const& c1, C<T> const& c2);
+
+public:
+    C() 
+        : m_r(T{})
+        , m_i(T{})
+    {
+    }
+    C(T r, T i ) 
+        : m_r( r)
+        , m_i( i)
+    {}
+    C( const C & c) {
+        m_r = c.m_r;
+        m_i = c.m_i;
+    }
+    C& operator=(C const& c) {
+        m_r = c.m_r;
+        m_i = c.m_i;
+        return *this;
+    }
+
+    T r() const {
+        return m_r;
+    }
+    T i() const {
+        return m_i;
+    }
+    T length() const {
+    
+    }
+    T length2() const {
+        return m_r * m_r + m_i * m_i;
+    }
+    C& operator *=(T const* v) {
+        m_r *= v;
+        m_i *= v;
+        return *this;
+    }
+    C& operator+=(C const& t) {
+        m_r += t.m_r;
+        m_i += t.m_i;
+        return *this;
+    }
+    C& operator-=(C const& t) {
+        m_r -= t.m_r;
+        m_i -= t.m_i;
+        return *this;
+    }
+
+private:
+    T m_r;
+    T m_i;
+};
+
+template<typename T>
+C<T> operator+(C<T> const& c1, C<T> const& c2) {
+    C<T> c;
+    c.m_r = c1.m_r + c2.m_r;
+    c.m_i = c1.m_i + c2.m_i;
+    return c;
+}
+
+template<typename T>
+C<T> operator* (C<T> const& c1, C<T> const& c2) {
+    C<T> c;
+    c.m_r = c1.m_r * c2.m_r - c1.m_i * c2.m_i;
+    c.m_i = c1.m_r * c2.m_i + c1.m_i * c2.m_r;
+    return c;
+}
+template<typename T>
+C<T> operator* ( T const& v , C<T> const& c ){
+    C<T> t;
+    t.m_r = v * c.m_r;
+    t.m_i = v * c.m_i;
+    return t;
+}
+
+class JuliaFragmentShader : public gpc::FragmentShader<glm::vec4>{
+public:
+    glm::vec4 execute(gpc::fragment< glm::vec4>  const& v) override {
+
+        C<float> c( 3.2f * (v.pos.x + 1.0f)/2.0f - 1.6f,
+                    2.4f *( v.pos.y + 1.0f)/2.0f - 1.2f);
+        C<float> t(-0.75f, 0.0f);
+
+        size_t k = 0;
+        for ( k = 0; k < 256; ++k) {
+            if ( c.length2() > 4.0f) {
+                break;
+            }
+            c = c * c + t;
+        }
+        if (k == 256) {
+            return glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+        }
+        else {
+            return glm::vec4( k / 255.0f ,k / 255.0f, k / 255.0f , 1.0f );
+        }
+
+    }
+
+};
 
 
 MyBlowWindow::MyBlowWindow(const char* title, uint32_t width, uint32_t height, std::shared_ptr<gpc::Device> device)
@@ -18,41 +141,33 @@ void MyBlowWindow::render(float passTime, float deltaTime)  {
     fbo->clear({ 0,0,0,0 });
     fbo->clearDepth(1.0f);
     const static float speed = 2.0f * 3.1415926f / 50.0f;
-    //glm::mat4 mat;
-    //glm::vec3 pos = m_camera->getPosition();
-    //mat = glm::rotate(mat, passTime * speed, glm::vec3(0.0f, 1.0f, 0.0f));
-    //*m = m_camera->to_mat() * mat;
-    m_pipeline->bindVertexBuffer(m_vertexBuffer);
-    m_pipeline->draw( gpc::PrimitiveType::kTriangle);
-    //m_modelPipeline->draw(gpc::PrimitiveType::kTriangle);
-    //*m_pv = m_camera->to_mat();
-    //const gpc::OTree<gpc::Object<float>, float>* otree = m_scene->getOTree();
-    //drawOTree(otree);
+
+    m_juliaPipeline->draw(gpc::PrimitiveType::kTriangle);
 }
+
 
 void MyBlowWindow::initScene() {
     
-    m_texture = helper::TextureLoad().makeTexture2D("cottage_diffuse.png");
-    /*
-    helper::Model<float>* model = helper::Model<float>::parseModel("cottage_obj.obj");
-    m_modelVertexBuffer = std::make_shared<gpc::VertexBuffer<helper::Vertex<float>> >();
-    m_modelVertexBuffer->copyVertex(model->data(), model->vertexCount());
-    m_modelVertexBuffer->copyIndex(model->at(0)->indexData(), model->at(0)->indexCount());
-    */
+    m_texture = helper::TextureLoad().makeTexture2D("a.jpg");
 
     m_camera = std::make_shared<gpc::MoveProjectionCamera>(60.0f, 800, 600, 0.1f, 10.0f, glm::vec3(0.0f, 0.0f, 10.0f));
     m_camera->setLookAt(glm::vec3(0.0f, 0.0f, 0.0f));
+
     Vertex vertex[] = {
 
-
-        {{-0.5f, -0.5f, 0.0f,  },{1.0f,0.0f,0.0f},{0.0f,0.0f}},
-        {{0.5f, -0.5f, 0.0f,   },{0.0f,1.0f,0.0f},{1.0f,0.0f}},
-        {{0.0f,   0.5f, 0.0f, },{0.0f,0.0f,1.0f},{1.0f,1.0f}},
+        {{-1.0f, -1.0f, 0.0f,  },{1.0f,0.0f,0.0f},{0.0f,0.0f}},
+        {{1.0f, -1.0f, 0.0f,   },{0.0f,1.0f,0.0f},{1.0f,0.0f}},
+        {{1.0f,   1.0f, 0.0f, },{0.0f,0.0f,1.0f},{1.0f,1.0f}},
+        
+        {{1.0f,   1.0f, 0.0f, },{0.0f,0.0f,1.0f},{1.0f,1.0f}},
+        {{-1.0f,   1.0f, 0.0f, },{0.0f,0.0f,1.0f},{0.0f,1.0f}},
+        {{-1.0f,   -1.0f, 0.0f, },{0.0f,0.0f,1.0f},{0.0f,0.0f}},
 
     };
 
     m_vertexBuffer = std::make_shared<gpc::VertexBuffer<Vertex>>();
     m_vertexBuffer->copyVertex(vertex, sizeof(vertex) / sizeof(vertex[0]));
+
     std::vector<Vertex> line;
     for (float i = 0; i < 599.0f; i += 10.0f) {
         line.push_back({ {-1.0f,-1.0f,0.0f},{1.0f,0.0f,0.0} });
@@ -71,14 +186,6 @@ void MyBlowWindow::initScene() {
 
 
     m_pipeline = std::make_shared<gpc::RasterizePipeline<Vertex, ShaderPass >>( m_device );
-    /*
-    m_modelPipeline = std::make_shared<gpc::RasterizePipeline<helper::Vertex<float>, ShaderPass>>( m_device );
-    m_modelPipeline->setEnableDepthTest(true);
-    m_modelPipeline->setEnableDepthWrite(true);
-    m_modelPipeline->bindVertexBuffer(m_modelVertexBuffer);
-    m_modelPipeline->bindFramebuffer(getFbo());
-    m_modelPipeline->bindVertexShader(std::make_shared<ModelVertexShader>(m));
-    */
 
 
 
@@ -90,10 +197,10 @@ void MyBlowWindow::initScene() {
     fs->texture = m_texture;
     std::shared_ptr< ParallelLightFragmentShader> plfs = std::make_shared<ParallelLightFragmentShader>(glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
     m_pipeline->bindFragmentShader(fs);
-    //m_modelPipeline->bindFragmentShader(fs);
 
 
     initAABB();
+    _InitJuliaSence();
 }
 
 void MyBlowWindow::initAABB() {
@@ -160,8 +267,34 @@ void MyBlowWindow::drawAABB( gpc::AABB<float> const& aabb) {
     m_aabbVertex->copyVertex( vertex,8);
     m_aabbVertex->copyIndex( index, 24);
     m_aabbPipeline->bindVertexBuffer( m_aabbVertex );
-    //m_aabbPipeline->draw(gpc::PrimitiveType::kLine);
     
+}
+
+
+void MyBlowWindow::_InitJuliaSence() {
+
+    glm::vec2 vertex[] = {
+        {-1.0f, -1.0f },
+        {1.0f,  -1.0f },
+        {1.0f,   1.0f},
+
+        {1.0f,   1.0f },
+        {-1.0f,  1.0f},
+        {-1.0f, -1.0f},
+
+    };
+
+    m_vertexJulia = std::make_shared<gpc::VertexBuffer<glm::vec2 >>();
+    m_vertexJulia->copyVertex(vertex, sizeof(vertex) / sizeof(vertex[0]));
+
+
+    m_juliaPipeline = std::make_shared<gpc::RasterizePipeline<glm::vec2,glm::vec4>>( m_device );
+
+    m_juliaPipeline->bindVertexBuffer( m_vertexJulia );
+    m_juliaPipeline->bindFramebuffer(getFbo());
+    m_juliaPipeline->bindVertexShader( std::make_shared<JuliaVertexShader>());
+    m_juliaPipeline->bindFragmentShader(std::make_shared<JuliaFragmentShader>());
+
 }
 
 

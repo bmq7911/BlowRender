@@ -28,18 +28,15 @@ namespace gpc{
                 return;
             }
             m_aabb = m_objects.at(0)->getBVH()->toAABB();
-
             /// ≥ﬂ∂»–≈œ¢
             for (size_t  i = 1; i < m_objects.size(); ++i) {
                 m_aabb = m_aabb.unionAABB(m_objects.at(i)->getBVH()->toAABB());
             }
-            
             m_otree = new OTree<Object<T>,T>(nullptr, m_aabb);
 
             for (size_t i = 0; i < m_objects.size(); ++i) {
                 m_otree->mountNode( 1.0, m_objects[i]);
             }
-
         }
         
         void setLightDir( glm::tvec3<T> const& dir) {
@@ -76,7 +73,8 @@ namespace gpc{
             return m_otree;
         }
     private:
-        Object<T>* _HitObject( OTree<Object<T>,T>* node, Ray<T> const & ray , T& t ,glm::tvec3<T>& normal ) {
+        Object<T>* _HitObject( OTree<Object<T>,T>* node, 
+                               Ray<T> const & ray , T& t ,glm::tvec3<T>& normal ) {
             Object<T> *retObj = nullptr;
             if (nullptr != node && true == node->hit(ray)) {
                     for (size_t i = 0; i < node->sizeNode(); ++i) {

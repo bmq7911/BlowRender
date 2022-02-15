@@ -20,6 +20,7 @@ namespace gpc{
 	
     class ITaskIssue {
     public:
+		virtual void     init(uint32_t size) = 0;
         virtual uint32_t doTask(Tid3 const& tid) = 0;
 		virtual Dim3     getTaskDim() const = 0;
 	};
@@ -27,22 +28,14 @@ namespace gpc{
     class Device {
         class ExecuteCore {
         public:
-			enum State : uint32_t {
-				kStart,
-				kRun,
-				kWait,
-				kStop,
-			};
 			ExecuteCore(uint32_t id, Device* device,std::mutex* mutex, std::condition_variable *variable );
 			~ExecuteCore();
 			uint32_t getTid() const;
 			uint32_t work(std::mutex* mutex, std::condition_variable * variable);
-			State getState() const;
 		protected:
 			friend class Device;
             uint32_t m_id;
             Device*  m_device;
-			State       m_state;
             std::thread m_thread;
         };
 	public:
@@ -64,9 +57,9 @@ namespace gpc{
 		std::atomic<uint32_t>       m_coreRunCount;
         std::shared_ptr<ITaskIssue> m_taskIssues;
 		std::condition_variable     m_wakeUpCore;
-		std::condition_variable     m_wakeUpWait;
+		std::condition_variable     m_wakeUpMainThread;
 		std::mutex                  m_sleepCore;
-		std::mutex                  m_coreWait;
+		std::mutex                  m_sleepMainThread;
 		std::vector<std::shared_ptr<ExecuteCore>> m_executeCore;
 
     };

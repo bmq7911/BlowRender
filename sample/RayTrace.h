@@ -8,6 +8,8 @@
 #include "Ray/RayTracePipeline.h"
 #include "Graphics/AABB.h"
 #include "scene.h"
+
+
 class RayTraceBlowWindow : public win::BlowWindow {
 public:
 	RayTraceBlowWindow(const char* title, uint32_t width, uint32_t height,std::shared_ptr<gpc::Device>);

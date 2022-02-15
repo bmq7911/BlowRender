@@ -4,48 +4,54 @@ namespace gpc {
 	Device::ExecuteCore::ExecuteCore( uint32_t id, Device* device, std::mutex *mutex, std::condition_variable * variable) 
 		: m_id( id)
 		, m_device( device)
-		, m_state( kStart)
 	{
 		m_thread = std::move(std::thread(&Device::ExecuteCore::work, this, mutex,variable));
 	}
 	
 	Device::ExecuteCore::~ExecuteCore() {
-	
+		m_thread.join( );
 	}
 	
 	uint32_t Device::ExecuteCore::getTid() const {
 		return m_id;
 	}
-
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="mutex"> Device::m_sleepCore</param>
+	/// <param name="variable">Device::m_wakeUpCore</param>
+	/// <returns></returns>
 	uint32_t Device::ExecuteCore::work(std::mutex* mutex, std::condition_variable* variable) {
 		while (!m_device->_IsStop()) {
-			m_state = Device::ExecuteCore::kStart;
 			uint32_t id = m_id;
 			Tid3 tid;
 			while ( m_device->_IdToTid3( id, tid)) {
-						m_state = State::kRun;
-						m_device->_DoWork(tid);
-						id += m_device->getExecuteCoreCount();
+				m_device->_DoWork(tid);
+				id += m_device->getExecuteCoreCount();
 			}
-			uint32_t count = m_device->_DecreaseRunCount();
+
 			if (m_device->_IsStop()) {
+				m_device->_DecreaseRunCount();
 				break;
 			}
-			m_state = State::kWait;
+			/// <summary>
+			///  thread 2 be suspend in there,and next time don't have change to be wake up
+			/// </summary>
+			/// <param name="mutex"></param>
+			/// <param name="variable"></param>
+			/// <returns></returns>
+			std::unique_lock<std::mutex> locker(*mutex);
+			uint32_t count = m_device->_DecreaseRunCount();
 			if (0 == count) {
 				m_device->_NotifyDeviceWorkDone(); /// 通知主线程，任务已执行完成
 			}
-			std::unique_lock<std::mutex> locker(*mutex);
 			variable->wait(locker);
 		}
+		m_device->_DecreaseRunCount( );
 		m_device->_NotifyDeviceWorkDone();
-		m_state = State::kStop;
 		return 0;
 	}
 
-	Device::ExecuteCore::State Device::ExecuteCore::getState() const {
-		return m_state;
-	}
 
     Device::Device()
 		: m_bStop( false )
@@ -63,6 +69,7 @@ namespace gpc {
 		}
 		m_taskIssues = taskIssue;
 		m_coreRunCount = m_executeCore.size();
+		m_taskIssues->init( m_coreRunCount );
 		m_wakeUpCore.notify_all();
 	}
 
@@ -82,13 +89,17 @@ namespace gpc {
 
 	void Device::_WaitAllExecuteCoreWorkDone() {
 		if (0 != m_coreRunCount) {
-			std::unique_lock<std::mutex> locker(m_coreWait);
-			m_wakeUpWait.wait(locker);
+			/// <summary>
+			/// 最好还是一把锁对应一个条件变量,而非一把锁对应多个条件变量
+			/// </summary>
+			std::unique_lock<std::mutex> locker(m_sleepMainThread);
+			///std::unique_lock<std::mutex> locker(m_sleepCore);
+			m_wakeUpMainThread.wait(locker);
 		}
 	}
 	
 	void Device::_NotifyDeviceWorkDone() {
-		m_wakeUpWait.notify_one();
+		m_wakeUpMainThread.notify_one();
 	}
 
 	bool Device::_IsStop() const{
@@ -97,7 +108,7 @@ namespace gpc {
 
 	uint32_t Device::_DecreaseRunCount() {
 		--m_coreRunCount;
-		return m_coreRunCount;
+		return m_coreRunCount.load( );
 	}
 
 	uint32_t Device::_DoWork(Tid3 const& tid) {
@@ -115,6 +126,7 @@ namespace gpc {
 					tid.x = id / dim.y;
 					tid.y = id % dim.y;
 					LOG_TRACE("Tid", "id = %d tid = [%d,%d,%d]", tid.x, tid.y, tid.z);
+					//std::cout << tid.x << ","<<tid.y << ","<< tid.z << std::endl;
 					return true;
 				}
 			}
