@@ -7,6 +7,7 @@ if (WIN32)
 	add_definitions(/Zi)
 endif(WIN32)
 
+
 set_property( GLOBAL PROPERTY USE_FOLDERS ON)
 add_compile_options(/wd4819 /wd4100 /wd4244 /wd4189 /wd4200 /wd4815 )
 

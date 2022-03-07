@@ -232,9 +232,9 @@ namespace gpc {
             tmin.y = std::min(a1.m_min.y, a2.m_min.y);
             tmin.z = std::min(a1.m_min.z, a2.m_min.z);
 
-            tmax.x = std::max(a1.m_max.x, a2.m_m_max.x);
-            tmax.y = std::max(a1.m_max.y, a2.m_m_max.y);
-            tmax.z = std::max(a1.m_max.z, a2.m_m_max.z);
+            tmax.x = std::max(a1.m_max.x, a2.m_max.x);
+            tmax.y = std::max(a1.m_max.y, a2.m_max.y);
+            tmax.z = std::max(a1.m_max.z, a2.m_max.z);
             return AABB<T>(tmin, tmax);
         }
 

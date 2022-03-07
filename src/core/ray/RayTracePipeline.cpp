@@ -15,29 +15,6 @@ namespace gpc {
 
         m_camera = std::make_shared<RayCamera>(width, height, 60.0);
 
-        /*
-        Sphere<double> s1(glm::tvec3<double>( -3.0,-3.0,-3.0), 2.0);
-        Sphere<double> s2(glm::tvec3<double>( -3.0, 3.0,-3.0), 2.0);
-        Sphere<double> s3(glm::tvec3<double>( 3.0,  3.0,-3.0), 2.0);
-        Sphere<double> s4(glm::tvec3<double>( 3.0, -3.0,-3.0), 2.0);
-
-        Sphere<double> s5(glm::tvec3<double>( -3.0,-3.0,3.0), 2.0);
-        Sphere<double> s6(glm::tvec3<double>( -3.0, 3.0,3.0), 2.0);
-        Sphere<double> s7(glm::tvec3<double>( 3.0,  3.0,3.0), 2.0);
-        Sphere<double> s8(glm::tvec3<double>( 3.0, -3.0,3.0), 2.0);
-        Sphere<double> s9(glm::tvec3<double>( 3.0, -3.0,3.0), 2.0);
-
-        m_scene->addObject(&s1);
-        m_scene->addObject(&s2);
-        m_scene->addObject(&s3);
-        m_scene->addObject(&s4);
-        m_scene->addObject(&s5);
-        m_scene->addObject(&s6);
-        m_scene->addObject(&s7);
-        m_scene->addObject(&s8);
-        m_scene->addObject(&s9);
-        */
-
         m_scene->addObject(&m_sphere);
         m_scene->addObject(&m_sphere1);
         m_scene->buildScene();
@@ -65,8 +42,19 @@ namespace gpc {
     gpc::scene<double>* RayTracePipeline::getScene() {
         return m_scene.get();
     }
-
-
+    uint32_t RayTracePipeline::doTask(Tid3 const& tid) {
+        Ray<double> ray = m_camera->at(tid.x, tid.y);
+        glm::vec4 color = m_scene->CollectColor(ray);
+        m_fbo->draw_point(tid.y, tid.x, 1.0f, ConvertColor(color));
+        return 0;
+    }
+    Dim3 RayTracePipeline::getTaskDim() const{
+        Dim3 size;
+        size.x = m_width;
+        size.y = m_height;
+        size.z = 1;
+        return size;
+    }
     glm::vec4i8 RayTracePipeline::ConvertColor(glm::vec4 const& src) {
         glm::vec4i8 color;
         color.x = int8_t(src.x * 255.0f + 0.5f);

@@ -21,19 +21,10 @@ namespace gpc {
         
         void init(uint32_t size) override {
         }
-        uint32_t doTask(Tid3 const& tid) override {
-            Ray<double> ray = m_camera->at(tid.x, tid.y);
-            glm::vec4 color = m_scene->CollectColor(ray);
-            m_fbo->draw_point(tid.y, tid.x, 1.0f, ConvertColor(color));
-            return 0;
-        }
-        Dim3 getTaskDim() const override {
-            Dim3 size;
-            size.x = m_width;
-            size.y = m_height;
-            size.z = 1;
-            return size;
-        }
+        uint32_t doTask(Tid3 const& tid) override;
+        
+        Dim3 getTaskDim() const override;
+
 
         static glm::vec4i8 ConvertColor(glm::vec4 const& src);
     public:

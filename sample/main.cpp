@@ -22,10 +22,11 @@ void ray_trace() {
 }
 
 int main(int argc, char* argv[]) {
-    //ray_trace();
+    
     ed::IComponent* input = new ed::MouseInputComponent;
     auto ptr = ed::Cast< ed::MouseInputComponent>(input); /// 不论如何我们都无法做到这一步,除非时每一个 component class 都有一个id
 
-    rasterizate();
+    //rasterizate();
+    ray_trace();
     return 0;
 }

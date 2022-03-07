@@ -5,7 +5,7 @@ namespace gpc {
 	template<typename M, typename T = double>
 	class KDTree {
 	public:
-		KDTree()
+		KDTree( )
 			: m_parent(nullptr)
 			, m_left(nullptr)
 			, m_right(nullptr)
