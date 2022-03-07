@@ -62,6 +62,25 @@ namespace gpc{
             if (true == m_aabb.hit(ray)) {
                 Object<T>*obj = _HitObject(m_otree, ray, t, normal);
                 if (nullptr != obj) {
+                    /// <summary>
+                    /// 这里做次级反射
+                    /// </summary>
+                    /// <param name="ray"></param>
+                    /// <returns></returns>
+                    gpc::Ray<T> second_ray( ray.at(t), glm::reflect(ray.d, normal));
+
+                    /// <summary>
+                    /// 这里就是简单的递归过程,但是这个过程会很复杂,如何控制递归的层次就很复杂了
+                    /// </summary>
+                    /// <param name="ray"></param>
+                    /// <returns></returns>
+                    glm::vec4 color = CollectColor( second_ray);
+                    
+                    /// <summary>
+                    ///  这里充当了着色过程
+                    /// </summary>
+                    /// <param name="ray"></param>
+                    /// <returns></returns>
                     T tmp = glm::dot( - ray.d(), normal);
                     if (tmp > 0) {
                         float c = static_cast<float>(tmp);
@@ -131,10 +150,6 @@ namespace gpc{
             }
         }
         
-        /// <summary>
-        /// 在编译器的优化逻辑之中,能否优化掉过多的条件语句??
-        /// </summary>
-        /// <param name="obj"></param>
         void _UpdateSceneAABB( Object<T>*  obj) {
             if (nullptr != obj) {
                 BVH<T> const *bvh = obj->getBVH();

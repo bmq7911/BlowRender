@@ -40,6 +40,7 @@ namespace gpc {
         void setAABB(AABB<T> aabb) {
             m_aabb = aabb;
         }
+        
         OTree<M, T>* getParent() const {
             return m_parent;
         }
