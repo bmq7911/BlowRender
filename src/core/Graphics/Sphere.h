@@ -35,9 +35,9 @@ namespace gpc {
         }
         bool hit(Ray<T> const& ray, T& t, glm::tvec3<T>& normal) const override {
             T a = glm::dot(ray.d(), ray.d());
-            T b = 2 * glm::dot(ray.o() - m_pos, ray.d());
+            T b = T(2) * glm::dot(ray.o() - m_pos, ray.d());
             T c = glm::dot(ray.o() - m_pos, ray.o() - m_pos) - m_r * m_r;
-            T d = b * b - 4 * a * c;
+            T d = b * b - T(4) * a * c;
             if (d < static_cast<T>(0.0)) {
                 return false;
             }
@@ -48,8 +48,8 @@ namespace gpc {
                     return true;
                 }
                 else {
-                    T t1 = 0.5 * (-b + sqrt(d)) / a;
-                    T t2 = 0.5 * (-b - sqrt(d)) / a;
+                    T t1 = T(0.5) * (-b + sqrt(d)) / a;
+                    T t2 = T(0.5) * (-b - sqrt(d)) / a;
                     t = min_greater(t1, t2, static_cast<T>(0));
                     if (0.0 == t) {
                         return false;

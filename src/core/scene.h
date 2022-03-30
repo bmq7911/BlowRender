@@ -57,7 +57,8 @@ namespace gpc{
         /// 这个东西的并行性还是很好的
         glm::vec4 CollectColor( gpc::Ray<T>& ray ) {
             glm::tvec3<T> normal;
-            T t = std::numeric_limits<T>::max();
+            T t = std::numeric_limits<T>::max( );
+
             /// 光线被照亮
             if (true == m_aabb.hit(ray)) {
                 Object<T>*obj = _HitObject(m_otree, ray, t, normal);
@@ -67,7 +68,7 @@ namespace gpc{
                     /// </summary>
                     /// <param name="ray"></param>
                     /// <returns></returns>
-                    gpc::Ray<T> second_ray( ray.at(t), glm::reflect(ray.d, normal));
+                    gpc::Ray<T> second_ray( ray.at(t), glm::reflect(ray.d( ), normal));
 
                     /// <summary>
                     /// 这里就是简单的递归过程,但是这个过程会很复杂,如何控制递归的层次就很复杂了
@@ -98,21 +99,27 @@ namespace gpc{
         bool hit(Ray<T>const & ray) {
             return m_aabb.hit(ray);
         }
+        
         iterator begin() {
             return m_objects.begin( );
         }
+
         iterator end() {
             return m_objects.end( );
         }
+
         const_iterator begin() const {
             return m_objects.begin();
         }
+
         const_iterator end() const {
             return m_objects.end();
         }
+
         const OTree<Object<T>, T>* getOTree() const {
             return m_otree;
         }
+
     private:
         Object<T>* _HitObject( OTree<Object<T>,T>* node, 
                                Ray<T> const & ray , T& t ,glm::tvec3<T>& normal ) {
@@ -162,5 +169,6 @@ namespace gpc{
 	    AABB<T>       m_aabb;
 	    OTree<Object<T>,T>* m_otree;
         std::unordered_set<Object<T>*> m_objects;
+        std::vector<Light<T>*>  m_lights;
     };
 }
