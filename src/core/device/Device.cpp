@@ -84,7 +84,7 @@ namespace gpc {
 	}
 
 	uint32_t Device::getExecuteCoreCount() const {
-		return m_executeCore.size();
+		return static_cast<uint32_t>(m_executeCore.size());
 	}
 
 	void Device::_WaitAllExecuteCoreWorkDone() {

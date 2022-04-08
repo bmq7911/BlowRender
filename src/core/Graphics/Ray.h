@@ -1,25 +1,26 @@
 #pragma once
 #include "glm/glm.hpp"
+#include "BFloat.h"
+
 namespace gpc {
-    template<typename _T = double>
     class Ray {
     public:
-        Ray(glm::tvec3<_T> const& pos, glm::tvec3<_T> const& dir)
+        Ray(glm::fvec3 const& pos, glm::fvec3 const& dir)
             : m_o(pos)
         {
             m_d = glm::normalize(dir);
         }
-        glm::tvec3<_T> at(_T k) const {
+        glm::fvec3 at( Float k) const {
             return m_o + k * m_d;
         }
-        glm::tvec3<_T> o() const {
+        glm::fvec3 o() const {
             return m_o;
         }
-        glm::tvec3<_T> d() const {
+        glm::fvec3 d() const {
             return m_d;
         }
     public:
-        glm::tvec3<_T> m_o;
-        glm::tvec3<_T> m_d;
+        glm::fvec3 m_o;
+        glm::fvec3 m_d;
     };
 }

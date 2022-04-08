@@ -3,7 +3,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
-
+#include "BFloat.h"
 namespace gpc {
     enum CameraMovement {
         kForward,
@@ -22,9 +22,9 @@ namespace gpc {
 
     class Camera {
     public:
-        virtual glm::mat4 to_mat()  const = 0;
-        virtual glm::mat4 to_proj() const = 0;
-        virtual glm::mat4 to_view() const = 0;
+        virtual glm::fmat4 to_mat()  const = 0;
+        virtual glm::fmat4 to_proj() const = 0;
+        virtual glm::fmat4 to_view() const = 0;
 
     };
 }

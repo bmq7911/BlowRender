@@ -14,10 +14,10 @@ namespace gpc {
     class RayTracePipeline : public gpc::ITaskIssue {
     public:
         RayTracePipeline(uint32_t width, uint32_t height, std::shared_ptr<gpc::Framebuffer> fbo);
-        void bindScene(std::shared_ptr<gpc::scene<double>>);
+        void bindScene(std::shared_ptr<gpc::scene>);
         void draw();
         void draw(uint32_t x, uint32_t, glm::vec4 color);
-        gpc::scene<double>* getScene();
+        gpc::scene * getScene();
         
         void init(uint32_t size) override {
         }
@@ -30,10 +30,10 @@ namespace gpc {
     public:
         uint32_t m_width;
         uint32_t m_height;
-        Sphere<double> m_sphere;
-        Sphere<double> m_sphere1;
-        glm::tvec3<double> m_rayDir;
-        std::shared_ptr<gpc::scene<double>> m_scene;
+        Sphere m_sphere;
+        Sphere m_sphere1;
+        glm::fvec3 m_rayDir;
+        std::shared_ptr<gpc::scene> m_scene;
         std::shared_ptr<gpc::Framebuffer> m_fbo;
         std::shared_ptr<RayCamera> m_camera;
     private:

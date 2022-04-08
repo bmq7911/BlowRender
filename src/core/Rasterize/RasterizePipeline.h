@@ -40,31 +40,31 @@ namespace gpc {
     };
 
     struct depth_compare_equal {
-        bool operator()(float old_, float new_) {
+        bool operator()(Float old_, Float new_) {
             return old_ == new_;
         }
     };
 
     struct depth_compare_less {
-        bool operator()(float old_, float new_) {
+        bool operator()(Float old_, Float new_) {
             return new_ < old_;
         }
     };
 
     struct depth_compare_lessequal {
-        bool operator() (float old_, float new_) {
+        bool operator() (Float old_, Float new_) {
             return new_ <= old_;
         }
     };
 
     struct depth_compare_greater {
-        bool operator()(float old_, float new_) {
+        bool operator()(Float old_, Float new_) {
             return new_ > old_;
         }
     };
 
     struct depth_compare_greaterequal {
-        bool operator() (float old_, float new_) {
+        bool operator() (Float old_, Float new_) {
             return new_ >= old_;
         }
     };
@@ -126,8 +126,8 @@ namespace gpc {
         void init(uint32_t count) override { }
 
         uint32_t doTask(Tid3 const& tid) override {
-            glm::vec2 pix(tid.x + m_minX, tid.y + m_minY);
-            glm::vec3 w = m_rasterizetor->weight( pix );
+            glm::fvec2 pix(tid.x + m_minX, tid.y + m_minY);
+            glm::fvec3 w = m_rasterizetor->weight( pix );
             if ( w.x < -EPSILON || w.y <-EPSILON || w.z < -EPSILON ) {
                 return 0;
             }
@@ -180,7 +180,7 @@ namespace gpc {
             }
             else {
                 auto deltaP = (m_re.pos - m_rs.pos) / float(count);
-                glm::vec4 pos = m_rs.pos;
+                glm::fvec4 pos = m_rs.pos;
                 for (size_t i = 0; i < count; ++i) {
                     primitive<_FI> s;
                     primitive<_FI> e;

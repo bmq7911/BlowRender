@@ -11,46 +11,45 @@ namespace gpc {
     }
 
 
-    template<typename T>
-    class Sphere : public BVH<T> {
+    class Sphere : public BVH {
     public:
-        Sphere(glm::tvec3<T> const& pos, T const& r)
+        Sphere(glm::fvec3 const& pos, Float const& r)
             : m_pos(pos)
             , m_r(r)
         {}
-        glm::tvec3<T> o() const {
+        glm::fvec3 o() const {
             return m_pos;
         }
-        T r() const {
+        Float r() const {
             return m_r;
         }
 
-        bool hit(Ray<T> const& ray) const override {
-            T t;
-            glm::tvec3<T> normal;
-            return Sphere<T>::hit(ray, t, normal);
+        bool hit(Ray const& ray) const override {
+            Float t;
+            glm::fvec3 normal;
+            return Sphere::hit(ray, t, normal);
         }
-        AABB<T> toAABB() const override {
-            return AABB<T>(glm::tvec3<T>(m_pos - glm::tvec3<T>(m_r, m_r, m_r)), glm::tvec3<T>(m_pos + glm::tvec3<T>(m_r, m_r, m_r)));
+        AABB toAABB() const override {
+            return AABB(glm::fvec3(m_pos - glm::fvec3(m_r, m_r, m_r)), glm::fvec3(m_pos + glm::fvec3(m_r, m_r, m_r)));
         }
-        bool hit(Ray<T> const& ray, T& t, glm::tvec3<T>& normal) const override {
-            T a = glm::dot(ray.d(), ray.d());
-            T b = T(2) * glm::dot(ray.o() - m_pos, ray.d());
-            T c = glm::dot(ray.o() - m_pos, ray.o() - m_pos) - m_r * m_r;
-            T d = b * b - T(4) * a * c;
-            if (d < static_cast<T>(0.0)) {
+        bool hit(Ray const& ray, Float& t, glm::fvec3& normal) const override {
+            Float a = glm::dot(ray.d(), ray.d());
+            Float b = Float(2) * glm::dot( ray.o() - m_pos, ray.d());
+            Float c = glm::dot(ray.o() - m_pos, ray.o() - m_pos) - m_r * m_r;
+            Float d = b * b - Float(4) * a * c;
+            if (d < static_cast<Float>(0.0)) {
                 return false;
             }
             else {
-                if (d == static_cast<T>(0.0)) {
-                    t = static_cast<T>(-0.5) * b / a;
+                if (d == static_cast<Float>(0.0)) {
+                    t = static_cast<Float>(-0.5) * b / a;
                     normal = glm::normalize(ray.at(t) - m_pos);
                     return true;
                 }
                 else {
-                    T t1 = T(0.5) * (-b + sqrt(d)) / a;
-                    T t2 = T(0.5) * (-b - sqrt(d)) / a;
-                    t = min_greater(t1, t2, static_cast<T>(0));
+                    Float t1 = Float(0.5) * (-b + sqrt(d)) / a;
+                    Float t2 = Float(0.5) * (-b - sqrt(d)) / a;
+                    t = min_greater(t1, t2, static_cast<Float>(0));
                     if (0.0 == t) {
                         return false;
                     }
@@ -63,7 +62,7 @@ namespace gpc {
 
 
     private:
-        glm::tvec3<T> m_pos;
-        T m_r;
+        glm::fvec3 m_pos;
+        Float m_r;
     };
 }

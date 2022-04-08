@@ -2,16 +2,15 @@
 #include "Graphics/Object.h"
 #include "Graphics/AABB.h"
 
-template<typename T>
-class Model : public gpc::Object<T>{
+class Model : public gpc::Object{
 public:
-    bool hit(gpc::Ray<T>& ray, T& t, glm::tvec3<T> &normal) override {
-               
+    bool hit(gpc::Ray const & ray, Float& t, glm::fvec3 &normal) const override {
+        return false;
     }
-    gpc::BVH<T> const* getBVH() const override {
-        return m_aabb;
+    gpc::BVH const* getBVH() const override {
+        return &m_aabb;
     }
 private:
-    gpc::AABB<T> m_aabb;
-    glm::tvec3<T> m_pos;
+    gpc::AABB m_aabb;
+    glm::fvec3 m_pos;
 };

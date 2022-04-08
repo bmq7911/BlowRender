@@ -211,18 +211,18 @@ void MyBlowWindow::initAABB() {
     m_aabbPipeline->bindFragmentShader(std::make_shared<AABBFragmentShader>());
     m_aabbPipeline->bindFramebuffer(getFbo());
 
-    m_scene = std::make_shared<gpc::scene<float>>();
+    m_scene = std::make_shared<gpc::scene>();
 
-    gpc::Sphere<float> *s1 = new gpc::Sphere<float>(glm::tvec3<float>(-3.0, -3.0, -3.0), 2.0);
-    gpc::Sphere<float> *s2 = new gpc::Sphere<float>(glm::tvec3<float>(-3.0, 3.0, -3.0), 2.0);
-    gpc::Sphere<float> *s3 = new gpc::Sphere<float>(glm::tvec3<float>(3.0, 3.0, -3.0), 2.0);
-    gpc::Sphere<float> *s4 = new gpc::Sphere<float>(glm::tvec3<float>(3.0, -3.0, -3.0), 2.0);
+    gpc::Sphere *s1 = new gpc::Sphere(glm::fvec3(-3.0, -3.0, -3.0), 2.0);
+    gpc::Sphere *s2 = new gpc::Sphere(glm::fvec3(-3.0, 3.0, -3.0), 2.0);
+    gpc::Sphere *s3 = new gpc::Sphere(glm::fvec3(3.0, 3.0, -3.0), 2.0);
+    gpc::Sphere *s4 = new gpc::Sphere(glm::fvec3(3.0, -3.0, -3.0), 2.0);
 
-    gpc::Sphere<float> *s5= new gpc::Sphere<float>(glm::tvec3<float>(-3.0, -3.0, 3.0), 2.0);
-    gpc::Sphere<float> *s6= new gpc::Sphere<float>(glm::tvec3<float>(-3.0, 3.0, 3.0), 2.0);
-    gpc::Sphere<float> *s7= new gpc::Sphere<float>(glm::tvec3<float>(3.0, 3.0, 3.0), 2.0);
-    gpc::Sphere<float> *s8= new gpc::Sphere<float>(glm::tvec3<float>(3.0, -3.0, 3.0), 2.0);
-    gpc::Sphere<float> *s9= new gpc::Sphere<float>(glm::tvec3<float>(3.0, -3.0, 3.0), 2.0);
+    gpc::Sphere *s5= new gpc::Sphere(glm::fvec3(-3.0, -3.0, 3.0), 2.0);
+    gpc::Sphere *s6= new gpc::Sphere(glm::fvec3(-3.0, 3.0, 3.0), 2.0);
+    gpc::Sphere *s7= new gpc::Sphere(glm::fvec3(3.0, 3.0, 3.0), 2.0);
+    gpc::Sphere *s8= new gpc::Sphere(glm::fvec3(3.0, -3.0, 3.0), 2.0);
+    gpc::Sphere *s9= new gpc::Sphere(glm::fvec3(3.0, -3.0, 3.0), 2.0);
 
     m_scene->addObject(s1);
     m_scene->addObject(s2);
@@ -236,9 +236,9 @@ void MyBlowWindow::initAABB() {
     m_scene->buildScene();
 }
 
-void MyBlowWindow::drawOTree(gpc::OTree<gpc::Object<float>, float> const* tree) {
+void MyBlowWindow::drawOTree(gpc::OTree<gpc::Object> const* tree) {
     if (nullptr != tree) {
-        gpc::AABB<float> const& aabb = tree->getAABB();
+        gpc::AABB const& aabb = tree->getAABB();
         drawAABB(aabb);
         for (size_t i = 0; i < 8; ++i) {
             auto child =  tree->atChild(i);
@@ -248,7 +248,7 @@ void MyBlowWindow::drawOTree(gpc::OTree<gpc::Object<float>, float> const* tree) 
     }
 }
 /// 这个东西的难点一定是在场景编辑里面
-void MyBlowWindow::drawAABB( gpc::AABB<float> const& aabb) {
+void MyBlowWindow::drawAABB( gpc::AABB const& aabb) {
     glm::vec3 vertex[8];
     glm::vec3 c = 0.5f * (aabb.max() + aabb.min());
     glm::vec3 r = 0.5f * (aabb.max() - aabb.min());
@@ -273,7 +273,7 @@ void MyBlowWindow::drawAABB( gpc::AABB<float> const& aabb) {
 
 void MyBlowWindow::_InitJuliaSence() {
 
-    glm::vec2 vertex[] = {
+    glm::fvec2 vertex[] = {
         {-1.0f, -1.0f },
         {1.0f,  -1.0f },
         {1.0f,   1.0f},
@@ -284,11 +284,11 @@ void MyBlowWindow::_InitJuliaSence() {
 
     };
 
-    m_vertexJulia = std::make_shared<gpc::VertexBuffer<glm::vec2 >>();
+    m_vertexJulia = std::make_shared<gpc::VertexBuffer<glm::fvec2 >>();
     m_vertexJulia->copyVertex(vertex, sizeof(vertex) / sizeof(vertex[0]));
 
 
-    m_juliaPipeline = std::make_shared<gpc::RasterizePipeline<glm::vec2,glm::vec4>>( m_device );
+    m_juliaPipeline = std::make_shared<gpc::RasterizePipeline<glm::fvec2,glm::fvec4>>( m_device );
 
     m_juliaPipeline->bindVertexBuffer( m_vertexJulia );
     m_juliaPipeline->bindFramebuffer(getFbo());

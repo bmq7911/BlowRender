@@ -3,20 +3,19 @@
 #include "Graphics/Object.h"
 
 namespace gpc {
-	template<typename T>
-	class Triangle : public Object<T> {
+	class Triangle : public Object {
 	public:
-		bool hit(Ray<T> const& ray, T& t, glm::tvec3<T>& normal) const {
+		bool hit(Ray const& ray, Float& t, glm::fvec3 & normal) const {
 			
 		}
-		glm::tvec3<T> normal() const {
-			glm::tvec3<T> v_ab = m_b - m_a;
-			glm::tvec3<T> v_ac = m_c - m_a;
+		glm::fvec3 normal() const {
+			glm::fvec3 v_ab = m_b - m_a;
+			glm::fvec3 v_ac = m_c - m_a;
 			return glm::cross(v_ab, v_ac);
 		}
 	private:
-		glm::tvec3<T> m_a;
-		glm::tvec3<T> m_b;
-		glm::tvec3<T> m_c;
+		glm::fvec3 m_a;
+		glm::fvec3 m_b;
+		glm::fvec3 m_c;
 	};
 }

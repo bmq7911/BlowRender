@@ -3,18 +3,16 @@
 #include "Object.h"
 
 namespace gpc {
-    template<typename T>
     class AABB;
 
-    template<typename T>
-    struct BVH : public Object<T> {
+    struct BVH : public Object{
     public:
 
-        BVH<T> const* getBVH() const override {
+        BVH const* getBVH() const override {
             return this;
         }
-        virtual bool hit(Ray<T> const& ray) const = 0;
-        virtual AABB<T> toAABB() const = 0;
+        virtual bool hit(Ray const& ray) const = 0;
+        virtual AABB toAABB() const = 0;
     };
 }
 

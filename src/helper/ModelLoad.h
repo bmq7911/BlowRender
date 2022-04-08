@@ -18,20 +18,17 @@ namespace std {
 }
 
 namespace helper {
-    template<typename T>
     struct Vertex {
-        glm::tvec3<T> aPos;
-        glm::tvec3<T> aNormal;
-        glm::tvec4<T> aTangent;
-        glm::tvec4<T> aJoint;
-        glm::tvec4<T> aWeight;
-        glm::tvec2<T> aTex;
+        glm::fvec3 aPos;
+        glm::fvec3 aNormal;
+        glm::fvec4 aTangent;
+        glm::fvec4 aJoint;
+        glm::fvec4 aWeight;
+        glm::fvec2 aTex;
     };
     
-    template<typename T>
     class Nodel;
 
-    template<typename T>
     class Mesh {
     public:
         uint32_t const* indexData() const {
@@ -42,34 +39,31 @@ namespace helper {
         }
 
     private:
-        template<typename>
         friend class Model;
         std::vector<uint32_t> m_index;
     };
-    template<typename T>
-    class Model : public gpc::Object<T>{
-        template<typename>
+    class Model : public gpc::Object{
         friend class Mesh;
     public:
         size_t meshCount() const {
-            m_meshs.size();
+            return m_meshs.size();
         }
-        helper::Vertex<T> const* data() const {
+        helper::Vertex const* data() const {
             return m_vertexs.data();
         }
         size_t vertexCount() const {
             return m_vertexs.size();
         }
-        const Mesh<T>* at(size_t index)const {
+        const Mesh* at(size_t index)const {
             return m_meshs.at(index);
         }
-        const gpc::AABB<T>& getAABB() const {
+        const gpc::AABB& getAABB() const {
             return m_aabb;
         }
-        const gpc::BVH<T>* getBVH() const override{
+        const gpc::BVH* getBVH() const override{
             return &m_aabb;
         }
-        bool hit(gpc::Ray<T>const & ray, T& t, glm::tvec3<T>& normal) const override {
+        bool hit(gpc::Ray const & ray, Float& t, glm::fvec3& normal) const override {
             if (m_aabb.hit(ray)) {
                 
             }
@@ -77,25 +71,25 @@ namespace helper {
         }
 
        
-        static Model<T>* Model::parseModel(const char* path) {
+        static Model* Model::parseModel(const char* path) {
             if (nullptr == path)
                 return nullptr;
             std::string strPath(path);
             char buffer[1024] = { 0 };
-            std::vector<glm::tvec3<T>> pos;
-            std::vector<glm::tvec3<T>> normals;
-            std::vector<glm::tvec2<T>> texcoords;
+            std::vector<glm::fvec3> pos;
+            std::vector<glm::fvec3> normals;
+            std::vector<glm::fvec2> texcoords;
             std::vector<glm::ivec3>    faces;
-            std::vector<glm::tvec4<T>> tangent;
-            std::vector<glm::tvec4<T>> joint;
-            std::vector<glm::tvec4<T>> weight;
+            std::vector<glm::fvec4> tangent;
+            std::vector<glm::fvec4> joint;
+            std::vector<glm::fvec4> weight;
 
 
             FILE* file = fopen(path, "rb");
             if (nullptr != file) {
                 while (nullptr != fgets(buffer, 1024, file)) {
                     /// 这是顶点数据
-                    glm::tvec3<T> aPos;
+                    glm::fvec3 aPos;
                     if (0 == strncmp(buffer, "v ", 2)) {
                         int nIterms = sscanf(buffer, "v %f %f %f",
                             &aPos.x, &aPos.y, &aPos.z);
@@ -104,7 +98,7 @@ namespace helper {
                         pos.push_back(aPos);
                     }
                     else if (0 == strncmp(buffer, "vn ", 3)) {
-                        glm::tvec3<T> aNormal;
+                        glm::fvec3 aNormal;
                         int nIterms = sscanf(buffer, "vn %f %f %f",
                             &aNormal.x, &aNormal.y, &aNormal.z);
                         if (3 != nIterms)
@@ -112,7 +106,7 @@ namespace helper {
                         normals.push_back(aNormal);
                     }
                     else if (0 == strncmp(buffer, "vt ", 3)) {
-                        glm::tvec2<T> aTex;
+                        glm::fvec2 aTex;
                         int nIterms = sscanf(buffer, "vt %f %f", &aTex.x, &aTex.y);
                         if (2 != nIterms)
                             return nullptr;
@@ -134,7 +128,7 @@ namespace helper {
                         faces.push_back(glm::ivec3(v3_v, v3_t, v3_n));
                     }
                     else if (0 == strncmp(buffer, "# ext.tangent ", 14)) {
-                        glm::tvec4<T> aTangent;
+                        glm::fvec4 aTangent;
                         int nIterms = sscanf(buffer, "# ext.tangent %f %f %f %f",
                             &aTangent.x, &aTangent.y, &aTangent.z, &aTangent.w);
                         if (4 != nIterms)
@@ -142,7 +136,7 @@ namespace helper {
                         tangent.push_back(aTangent);
                     }
                     else if (0 == strncmp(buffer, "# ext.joint ", 12)) {
-                        glm::tvec4<T> aJoint;
+                        glm::fvec4 aJoint;
                         int nIterms = sscanf(buffer, "# ext.joint %f %f %f %f",
                             &aJoint.x, &aJoint.y, &aJoint.z, &aJoint.w);
                         if (4 != nIterms)
@@ -150,7 +144,7 @@ namespace helper {
                         joint.push_back(aJoint);
                     }
                     else if (0 == strncmp(buffer, "# ext.weight ", 13)) {
-                        glm::tvec4<T> aWeight;
+                        glm::fvec4 aWeight;
                         int nIterms = sscanf(buffer, "# ext.weight %f %f %f %f",
                             &aWeight.x, &aWeight.y, &aWeight.z, &aWeight.w);
                         if (4 != nIterms)
@@ -166,16 +160,16 @@ namespace helper {
             return nullptr;
         }
 
-        static Model<T>* Model::_BuildModel(std::vector<glm::tvec3<T>>const& position, std::vector<glm::tvec3<T>> const& normals,
-            std::vector<glm::tvec2<T>> const& texcoords, std::vector<glm::ivec3> const& faces,
-            std::vector<glm::tvec4<T>> const& tangent, std::vector<glm::tvec4<T>> const& joint,
-            std::vector<glm::tvec4<T>>const& weight) {
+        static Model* Model::_BuildModel(std::vector<glm::fvec3>const& position, std::vector<glm::fvec3> const& normals,
+            std::vector<glm::fvec2> const& texcoords, std::vector<glm::ivec3> const& faces,
+            std::vector<glm::fvec4> const& tangent, std::vector<glm::fvec4> const& joint,
+            std::vector<glm::fvec4>const& weight) {
             /// 
-            gpc::MakeAABB<T> make;
-            std::vector<helper::Vertex<T>> vertexs;
+            gpc::MakeAABB make;
+            std::vector<helper::Vertex> vertexs;
             std::unordered_map<glm::ivec3, uint32_t> map;
             std::vector<uint32_t> indices;
-            helper::Vertex<T> vertex;
+            helper::Vertex vertex;
             for (size_t i = 0; i < faces.size(); ++i) {
                 glm::ivec3 face = faces[i];
                 auto iter = map.find(face);
@@ -214,9 +208,9 @@ namespace helper {
             }
 
 
-            Mesh<T>* mesh = new Mesh<T>;
+            Mesh * mesh = new Mesh;
             mesh->m_index = std::move(indices);
-            Model<T>* model = new Model<T>;
+            Model* model = new Model;
             model->m_aabb = make.getAABB();
             model->m_meshs.push_back(mesh);
             model->m_vertexs = std::move(vertexs);
@@ -224,8 +218,8 @@ namespace helper {
         }
         
     private:
-        std::vector<Mesh<T>*> m_meshs;
-        std::vector<helper::Vertex<T>> m_vertexs;
-        gpc::AABB<T> m_aabb;
+        std::vector<Mesh*> m_meshs;
+        std::vector<helper::Vertex> m_vertexs;
+        gpc::AABB m_aabb;
     };
 }

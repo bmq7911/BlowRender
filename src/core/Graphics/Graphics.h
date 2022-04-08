@@ -8,7 +8,7 @@ namespace gpc {
 
     class Liang_Barsky {
     public:
-        Liang_Barsky(float lx, float rx, float ty, float by)
+        Liang_Barsky(Float lx, Float rx, Float ty, Float by)
             : m_left(lx)
             , m_right(rx)
             , m_top(ty)
@@ -28,21 +28,21 @@ namespace gpc {
             /// Ntop    = (0.0f,-1.0f) -> dTop    = dot(v,N) = -(y1 - y0)    p = (-1.0,m_top )or (1,m_top)   -> k = AP .* N / ( AB .* N) ->  (1 - x0, m_top - y0 )   .* (0.0f,-1.0f ) / AB .* N = (- m_top + y0)  / ( -y1 + y0 )
             /// Nbottom = (0.0f, 1.0f) -> dBottom = dot(v,N) = y1-y0         p = (-1.0,m_b )  or (1,m_b)     -> k = AP .* N / ( AB .* N) ->  (1 - x0, m_b - y0 )     .* (0.0f,1.0f )  / AB .* N = ( m_top - y0)  / ( y1 - y0 )
 
-            float dLeft = p1.x - p0.x;
-            float APLeft = m_left - p0.x;
+            Float dLeft = p1.x - p0.x;
+            Float APLeft = m_left - p0.x;
 
-            float dRight = -(p1.x - p0.x);
-            float APRight = -m_right + p0.x;
+            Float dRight = -(p1.x - p0.x);
+            Float APRight = -m_right + p0.x;
 
-            float dTop = -(p1.y - p0.y);
-            float APTop = -m_top + p0.y;
+            Float dTop = -(p1.y - p0.y);
+            Float APTop = -m_top + p0.y;
 
-            float dBottom = p1.y - p0.y;
-            float APBottom = m_bottom - p0.y;
+            Float dBottom = p1.y - p0.y;
+            Float APBottom = m_bottom - p0.y;
 
             /// 入矩形
-            float u1 = 0.0f;
-            float u2 = 1.0f;
+            Float u1 = 0.0f;
+            Float u2 = 1.0f;
 
 
             /// chu
@@ -88,7 +88,7 @@ namespace gpc {
             /// 
         }
     private:
-        float m_left, m_right, m_top, m_bottom;
+        Float m_left, m_right, m_top, m_bottom;
     };
 
     /// 只能画水平线,不能画垂直线
@@ -249,7 +249,7 @@ namespace gpc {
     /// 三角形裁剪算法
     class SutherlandHodgman {
     public:
-        SutherlandHodgman(float left, float right, float top, float buttom)
+        SutherlandHodgman(Float left, Float right, Float top, Float buttom)
             : m_left(left)
             , m_right(right)
             , m_top(top)
@@ -333,7 +333,7 @@ namespace gpc {
         ///
         glm::vec2 _Intersect(glm::vec2 const& p1, glm::vec2 const& p2, Boundary winEdge) {
             glm::vec2 iPt;
-            float m;
+            Float m;
             if (p1.x != p2.x)
                 m = (p1.y - p2.y) / (p1.x - p2.x);
             switch (winEdge) {
@@ -387,8 +387,8 @@ namespace gpc {
         }
 
     private:
-        float m_left, m_right;
-        float m_top, m_buttom;
+        Float m_left, m_right;
+        Float m_top, m_buttom;
     };
 
     template<typename T, typename U = typename std::enable_if<std::is_floating_point<T>::value>::type>
@@ -419,19 +419,19 @@ namespace gpc {
             kN = (sN - 1) / (dN - 1);
         }
         glm::tvec4<T> weight(T x, T  y) const {
-            float tx = kM * x;
-            float ty = kN * y;
+            Float tx = kM * x;
+            Float ty = kN * y;
             /// 能否避免取整这个操作
-            float ox = _Floor(tx,typename float_trait<T>::type());
-            float oy = _Floor(ty,typename float_trait<T>::type());
+            Float ox = _Floor(tx,typename float_trait<T>::type());
+            Float oy = _Floor(ty,typename float_trait<T>::type());
 
-            float x12 = tx - ox;
-            float x11 = 1 - x12;
+            Float x12 = tx - ox;
+            Float x11 = 1 - x12;
 
-            float y12 = ty - oy;
-            float y11 = 1 - y12;
+            Float y12 = ty - oy;
+            Float y11 = 1 - y12;
 
-            glm::tvec4<T> w;
+            glm::fvec4 w;
             w.x = y12 * x11;
             w.y = x12 * y12;
             w.z = x11 * y11;
@@ -439,18 +439,18 @@ namespace gpc {
             return w;
         }
     public:
-        T _Floor(T value, bool) const {
+        Float _Floor(Float value, bool) const {
             return floorf(value);
         }
-        T _Floor(T value, char) const {
+        Float _Floor(Float value, char) const {
             return floor(value);
         }
-        T _Floor(T value, int) const {
+        Float _Floor(Float value, int) const {
             return floorl(value);
         }
     public:
-        T kM, kN;
-        T sM, sN;
-        T dM, dN;
+        Float kM, kN;
+        Float sM, sN;
+        Float dM, dN;
     };
 }

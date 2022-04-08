@@ -4,16 +4,17 @@
 #include "Graphics/OTree.hpp"
 #include "Graphics/KDTree.hpp"
 #include "Model.h"
+#include "Graphics/Light.h"
 #include <unordered_set>
+#include "BFloat.h"
 
 namespace gpc{
     /// this class is very important for render
     /// 
-    template<typename T>
     class scene {
     public:
-        using iterator       = typename std::unordered_set<Object<T>*>::iterator;
-        using const_iterator = typename std::unordered_set<Object<T>*>::const_iterator;
+        using iterator       = typename std::unordered_set<Object*>::iterator;
+        using const_iterator = typename std::unordered_set<Object*>::const_iterator;
 
     public:
         scene() 
@@ -21,9 +22,9 @@ namespace gpc{
         {
         }
 
-        void addObject( gpc::Object<T>* object ) {
+        void addObject( gpc::Object* object ) {
             if (nullptr == m_otree) {
-                m_otree = new OTree<Object<T>,T>();
+                m_otree = new OTree<Object>();
             }
             if(nullptr != object){
                 m_objects.insert(object);
@@ -43,32 +44,32 @@ namespace gpc{
             for (auto iter = begin(); iter != end(); ++iter) {
                 m_aabb = m_aabb.unionAABB((*iter)->getBVH()->toAABB());
             }
-            m_otree = new OTree<Object<T>,T>(nullptr, m_aabb);
+            m_otree = new OTree<Object>(nullptr, m_aabb);
                 
             for (auto iter = begin(); iter != end(); ++iter) {
                 m_otree->mountNode( 1.0, *iter);
             }
         }
         
-        void setLightDir( glm::tvec3<T> const& dir) {
+        void setLightDir( glm::fvec3 const& dir) {
             m_lightDir = glm::normalize(dir);
         }
 
         /// 这个东西的并行性还是很好的
-        glm::vec4 CollectColor( gpc::Ray<T>& ray ) {
-            glm::tvec3<T> normal;
-            T t = std::numeric_limits<T>::max( );
+        glm::vec4 CollectColor( gpc::Ray& ray ) {
+            glm::fvec3 normal;
+            Float t = std::numeric_limits<Float>::max( );
 
             /// 光线被照亮
             if (true == m_aabb.hit(ray)) {
-                Object<T>*obj = _HitObject(m_otree, ray, t, normal);
+                Object*obj = _HitObject(m_otree, ray, t, normal);
                 if (nullptr != obj) {
                     /// <summary>
                     /// 这里做次级反射
                     /// </summary>
                     /// <param name="ray"></param>
                     /// <returns></returns>
-                    gpc::Ray<T> second_ray( ray.at(t), glm::reflect(ray.d( ), normal));
+                    gpc::Ray second_ray( ray.at(t), glm::reflect(ray.d( ), normal));
 
                     /// <summary>
                     /// 这里就是简单的递归过程,但是这个过程会很复杂,如何控制递归的层次就很复杂了
@@ -82,7 +83,7 @@ namespace gpc{
                     /// </summary>
                     /// <param name="ray"></param>
                     /// <returns></returns>
-                    T tmp = glm::dot( - ray.d(), normal);
+                    Float tmp = glm::dot( - ray.d(), normal);
                     if (tmp > 0) {
                         float c = static_cast<float>(tmp);
                         return glm::vec4(tmp, tmp, tmp, 1.0f);
@@ -96,7 +97,7 @@ namespace gpc{
             //// 这里就是背景颜色,这里就可能是一个立方体采样而已
         }
 
-        bool hit(Ray<T>const & ray) {
+        bool hit(Ray const & ray) {
             return m_aabb.hit(ray);
         }
         
@@ -116,20 +117,20 @@ namespace gpc{
             return m_objects.end();
         }
 
-        const OTree<Object<T>, T>* getOTree() const {
+        const OTree<Object>* getOTree() const {
             return m_otree;
         }
 
     private:
-        Object<T>* _HitObject( OTree<Object<T>,T>* node, 
-                               Ray<T> const & ray , T& t ,glm::tvec3<T>& normal ) {
-            Object<T> *retObj = nullptr;
+        Object* _HitObject( OTree<Object>* node, 
+                               Ray const & ray , Float& t ,glm::fvec3& normal ) {
+            Object *retObj = nullptr;
             if (nullptr != node && true == node->hit(ray)) {
                     for (size_t i = 0; i < node->sizeNode(); ++i) {
-                        Object<T>* obj = node->atNode(i);
+                        Object* obj = node->atNode(i);
                         if (nullptr != obj) {
-                            T tmpT=T (0);
-                            glm::tvec3<T> tmpNormal;
+                            Float tmpT=Float (0);
+                            glm::fvec3 tmpNormal;
                             if (true == obj->hit(ray, tmpT, tmpNormal)) {
                                 if (tmpT < t){
                                     t = tmpT;
@@ -139,9 +140,9 @@ namespace gpc{
                             }
                         }
                     }
-                    Object<T> * subObj = nullptr;
-                    T tmpT = t;
-                    glm::tvec3<T> tmpNormal = normal;
+                    Object * subObj = nullptr;
+                    Float tmpT = t;
+                    glm::fvec3 tmpNormal = normal;
                     for (size_t i = 0; i < node->sizeChild(); ++i) {
                         subObj = _HitObject(node->atChild(i), ray, tmpT, tmpNormal);
                         if (nullptr != subObj && tmpT < t) {
@@ -157,18 +158,18 @@ namespace gpc{
             }
         }
         
-        void _UpdateSceneAABB( Object<T>*  obj) {
+        void _UpdateSceneAABB( Object*  obj) {
             if (nullptr != obj) {
-                BVH<T> const *bvh = obj->getBVH();
-                AABB<T> aabb = bvh->toAABB();
-                m_aabb = AABB<T>::unionAABB(m_aabb, aabb);
+                BVH const *bvh = obj->getBVH();
+                AABB aabb = bvh->toAABB();
+                m_aabb = AABB::unionAABB(m_aabb, aabb);
             }
         }
     private:
-        glm::tvec3<T> m_lightDir;
-	    AABB<T>       m_aabb;
-	    OTree<Object<T>,T>* m_otree;
-        std::unordered_set<Object<T>*> m_objects;
-        std::vector<Light<T>*>  m_lights;
+        glm::fvec3 m_lightDir;
+	    AABB       m_aabb;
+	    OTree<Object>* m_otree;
+        std::unordered_set<Object*> m_objects;
+        std::vector<Light*>  m_lights;
     };
 }

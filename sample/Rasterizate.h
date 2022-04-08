@@ -166,13 +166,13 @@ public:
 
 };
 
-class ModelVertexShader : public gpc::VertexShader<helper::Vertex<float>, ShaderPass> {
+class ModelVertexShader : public gpc::VertexShader<helper::Vertex, ShaderPass> {
 public:
     ModelVertexShader(std::shared_ptr<glm::mat4> m)
         : m_Model(m)
     {
     }
-    glm::vec4 execute(helper::Vertex<float> const& vertex, ShaderPass& out) {
+    glm::vec4 execute(helper::Vertex const& vertex, ShaderPass& out) {
         out.Normal = vertex.aNormal;
         out.pos = vertex.aPos;
         out.tex = vertex.aTex;
@@ -210,8 +210,8 @@ public:
     void render(float passTime, float deltaTime) override;
     void initScene();
     void initAABB();
-    void drawAABB( gpc::AABB<float>const & aabb);
-    void drawOTree(gpc::OTree<gpc::Object<float>, float> const* tree);
+    void drawAABB( gpc::AABB const & aabb);
+    void drawOTree(gpc::OTree<gpc::Object> const* tree);
     void processInput(float passTime, float deltaTime) override;
 private:
     void _InitJuliaSence();
@@ -222,17 +222,17 @@ private:
     std::shared_ptr<gpc::RasterizePipeline<Vertex, ShaderPass>> m_pipeline;
     std::shared_ptr<gpc::RasterizePipeline<glm::vec2, glm::vec4>> m_juliaPipeline;
 
-    std::shared_ptr<gpc::RasterizePipeline<helper::Vertex<float>, ShaderPass>> m_modelPipeline;
+    std::shared_ptr<gpc::RasterizePipeline<helper::Vertex, ShaderPass>> m_modelPipeline;
     std::shared_ptr<gpc::RasterizePipeline<glm::vec3, glm::vec3>> m_aabbPipeline;
 
-    std::shared_ptr<gpc::VertexBuffer<helper::Vertex<float>>> m_modelVertexBuffer;
+    std::shared_ptr<gpc::VertexBuffer<helper::Vertex>> m_modelVertexBuffer;
     std::shared_ptr<glm::mat4> m;
     std::shared_ptr<glm::mat4> m_pv;
     std::shared_ptr<gpc::VertexBuffer<glm::vec3>> m_aabbVertex;
 
     std::shared_ptr<gpc::MoveProjectionCamera> m_camera;
     std::shared_ptr<gpc::Texture2d> m_texture;
-    std::shared_ptr<gpc::OTree<gpc::Object<float>, float>> m_aabbTree;
-    std::shared_ptr<gpc::scene<float>> m_scene;
+    std::shared_ptr<gpc::OTree<gpc::Object>> m_aabbTree;
+    std::shared_ptr<gpc::scene> m_scene;
     std::shared_ptr<gpc::Device> m_device;
 };
