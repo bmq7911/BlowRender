@@ -72,8 +72,8 @@ namespace gpc {
             if (m_aabb.hit(ray)) {
                 Float tmpT1 = std::numeric_limits<Float>::max(); /// tmpT1 保持与光源相交最近的点
                 Float tmpT2 = std::numeric_limits<Float>::max();
-                glm::tvec3<T> tmpNormal1;
-                glm::tvec3<T> tmpNormal2;
+                glm::fvec3 tmpNormal1;
+                glm::fvec3 tmpNormal2;
 
                 bool bHit = false;
                 for (size_t i = 0; i < sizeNode(); ++i) { /// 先与这些物体相交,原因是这些物体都比较的大,有可能会遮挡其他小物体
@@ -88,8 +88,8 @@ namespace gpc {
                     if (nullptr != atChild(i)) {
                         Float tmpT3;
                         glm::fvec3 tmpNormal3;
-                        if (true == atChild(i)->getAABB()->hit(ray, tmpT3, tmpNormal3) && tmpT3 < tmpT1) {
-                            auto hit = atChild(i)->hit(ray, tmpT3, tmpNormal3);
+                        if (true == atChild(i)->getAABB().hit(ray, tmpT3, tmpNormal3) && tmpT3 < tmpT1) {
+                            auto hit = atChild(i)->hit(ray, tmpT3, tmpNormal3, model );
                             if (true == hit) {
                                 bHit = true;
                                 if (tmpT3 < tmpT1) {

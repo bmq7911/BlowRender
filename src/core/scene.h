@@ -11,160 +11,32 @@
 namespace gpc{
     /// this class is very important for render
     /// 
-    class scene {
+    class scene  {
     public:
         using iterator       = typename std::unordered_set<Object*>::iterator;
         using const_iterator = typename std::unordered_set<Object*>::const_iterator;
 
     public:
-        scene() 
-            : m_otree( nullptr)
-        {
-        }
-
-        void addObject( gpc::Object* object ) {
-            if (nullptr == m_otree) {
-                m_otree = new OTree<Object>();
-            }
-            if(nullptr != object){
-                m_objects.insert(object);
-                _UpdateSceneAABB(object);
-            }
-        }
-
-        void buildScene() {
-            if (m_objects.empty()) {
-                return;
-            }
-            m_aabb = (*begin())->getBVH()->toAABB();
-            /// 尺度信息
-            //for (size_t  i = 1; i < m_objects.size(); ++i) {
-            //    m_aabb = m_aabb.unionAABB(m_objects.at(i)->getBVH()->toAABB());
-            //}
-            for (auto iter = begin(); iter != end(); ++iter) {
-                m_aabb = m_aabb.unionAABB((*iter)->getBVH()->toAABB());
-            }
-            m_otree = new OTree<Object>(nullptr, m_aabb);
-                
-            for (auto iter = begin(); iter != end(); ++iter) {
-                m_otree->mountNode( 1.0, *iter);
-            }
-        }
+        scene();
+        void addObject(gpc::Object* object);
         
-        void setLightDir( glm::fvec3 const& dir) {
-            m_lightDir = glm::normalize(dir);
-        }
-
+        void buildScene( );
+        void setLightDir(glm::fvec3 const& dir);
+        /// 这个算法并不合理,或者不该在这里
         /// 这个东西的并行性还是很好的
-        glm::vec4 CollectColor( gpc::Ray& ray ) {
-            glm::fvec3 normal;
-            Float t = std::numeric_limits<Float>::max( );
-
-            /// 光线被照亮
-            if (true == m_aabb.hit(ray)) {
-                Object*obj = _HitObject(m_otree, ray, t, normal);
-                if (nullptr != obj) {
-                    /// <summary>
-                    /// 这里做次级反射
-                    /// </summary>
-                    /// <param name="ray"></param>
-                    /// <returns></returns>
-                    gpc::Ray second_ray( ray.at(t), glm::reflect(ray.d( ), normal));
-
-                    /// <summary>
-                    /// 这里就是简单的递归过程,但是这个过程会很复杂,如何控制递归的层次就很复杂了
-                    /// </summary>
-                    /// <param name="ray"></param>
-                    /// <returns></returns>
-                    glm::vec4 color = CollectColor( second_ray);
-                    
-                    /// <summary>
-                    ///  这里充当了着色过程
-                    /// </summary>
-                    /// <param name="ray"></param>
-                    /// <returns></returns>
-                    Float tmp = glm::dot( - ray.d(), normal);
-                    if (tmp > 0) {
-                        float c = static_cast<float>(tmp);
-                        return glm::vec4(tmp, tmp, tmp, 1.0f);
-                    }
-                    else {
-                        return glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
-                    }
-                }
-            }
-            return glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
-            //// 这里就是背景颜色,这里就可能是一个立方体采样而已
-        }
-
-        bool hit(Ray const & ray) {
-            return m_aabb.hit(ray);
-        }
-        
-        iterator begin() {
-            return m_objects.begin( );
-        }
-
-        iterator end() {
-            return m_objects.end( );
-        }
-
-        const_iterator begin() const {
-            return m_objects.begin();
-        }
-
-        const_iterator end() const {
-            return m_objects.end();
-        }
-
-        const OTree<Object>* getOTree() const {
-            return m_otree;
-        }
-
+        glm::vec4 CollectColor(gpc::Ray& ray);
+        bool hit(Ray const& ray);
+        iterator begin();
+        iterator end();
+        const_iterator begin() const;
+        const_iterator end() const;
+        const OTree<Object>* getOTree() const;
+        /// 返回被光纤hit中的第一个物体
+        Object* hit(Ray const& ray, Float& t, glm::fvec3& normal);
+        bool isLight(Object* obj);
     private:
-        Object* _HitObject( OTree<Object>* node, 
-                               Ray const & ray , Float& t ,glm::fvec3& normal ) {
-            Object *retObj = nullptr;
-            if (nullptr != node && true == node->hit(ray)) {
-                    for (size_t i = 0; i < node->sizeNode(); ++i) {
-                        Object* obj = node->atNode(i);
-                        if (nullptr != obj) {
-                            Float tmpT=Float (0);
-                            glm::fvec3 tmpNormal;
-                            if (true == obj->hit(ray, tmpT, tmpNormal)) {
-                                if (tmpT < t){
-                                    t = tmpT;
-                                    normal = tmpNormal;
-                                    retObj = obj;
-                                }
-                            }
-                        }
-                    }
-                    Object * subObj = nullptr;
-                    Float tmpT = t;
-                    glm::fvec3 tmpNormal = normal;
-                    for (size_t i = 0; i < node->sizeChild(); ++i) {
-                        subObj = _HitObject(node->atChild(i), ray, tmpT, tmpNormal);
-                        if (nullptr != subObj && tmpT < t) {
-                            t = tmpT;
-                            normal = tmpNormal;
-                            retObj = subObj;
-                        }
-                    }
-                    return retObj;
-            }
-            else {
-                return nullptr;
-            }
-        }
-        
-        void _UpdateSceneAABB( Object*  obj) {
-            if (nullptr != obj) {
-                BVH const *bvh = obj->getBVH();
-                AABB aabb = bvh->toAABB();
-                m_aabb = AABB::unionAABB(m_aabb, aabb);
-            }
-        }
+        Object* _HitObject(OTree<Object>* node, Ray const& ray, Float& t, glm::fvec3& normal);
+        void _UpdateSceneAABB(Object* obj);
     private:
         glm::fvec3 m_lightDir;
 	    AABB       m_aabb;

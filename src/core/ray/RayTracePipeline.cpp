@@ -29,6 +29,12 @@ namespace gpc {
         for (uint32_t j = 0; j < m_camera->YCount(); ++j) {
             for (uint32_t i = 0; i < m_camera->XCount(); ++i) {
                 Ray ray = m_camera->at(i, j);
+                Float t = std::numeric_limits<Float>::max();
+                glm::fvec3 normal;
+                auto obj = m_scene->hit(ray,t, normal );
+                if (nullptr != obj) { /// 有可能是光源
+                    
+                }
                 glm::vec4 color = m_scene->CollectColor(ray);
                 m_fbo->draw_point(i, j, 1.0f, ConvertColor(color));
             }
