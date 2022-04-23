@@ -6,9 +6,6 @@
 #include "GLFW/glfw3.h"
 #include "log.h"
 
-///目的   1.学习图形学的基本算法
-///       2.学习使用SIMD等技术
-///       3.使用多线程加速等
 
 static const struct {
     float x, y;
@@ -66,7 +63,7 @@ namespace win {
     }
 #define glCheckError() glCheckError_(__FILE__, __LINE__)
 
-    static void __stdcall glDebugOutput(GLenum source,
+    static void glDebugOutput(GLenum source,
         GLenum type,
         GLuint id,
         GLenum severity,
@@ -132,6 +129,7 @@ namespace win {
 
     bool BlowWindow::attachFrmaebuffer(std::shared_ptr<gpc::Framebuffer> fbo) {
         uint32_t size = fbo->getWidth() * fbo->getHeight() * sizeof(gpc::Framebuffer::value_type);
+	using BYTE=uint8_t;
         m_data = (BYTE*)realloc(m_data, size);
         m_attchFramebuffer = fbo;
         return true;
@@ -160,22 +158,9 @@ namespace win {
     void BlowWindow::mainloop() {
         float passTime = 0.0f;
         float deltaTime = 0.0f;
-        Watch t;
-        Watch t1;
-        Watch t2;
-        t.start();
-        t1.start();
         while (!glfwWindowShouldClose(m_window)) {
-            LONGLONG c = t.end();
-            passTime = static_cast<float>(t.toTime(c));
-            c = t1.end();
-            deltaTime = static_cast<float>(t1.toTime(c));
-            t1.start( );
             processInput( passTime, deltaTime );
-            t2.start();
             render(passTime, deltaTime);
-            double rt = t2.toTime(t2.end());
-            LOG_TRACE("FPS = ", "%d and deltaTime  = %f renderTime = %lf", int32_t(1.0f / deltaTime), deltaTime,rt);
             BlowWindow::render( passTime , deltaTime);
         }
         return;
