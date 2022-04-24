@@ -15,43 +15,43 @@ typedef float  Float;
 
 namespace glm {
     using fvec2 = glm::tvec2<Float>;
-    template fvec2;
+    //template fvec2;
 
     using fvec3 = glm::tvec3<Float>;
-    template fvec3;
+    //template fvec3;
 
     using fvec4 = glm::tvec4<Float>;
-    template fvec4;
+    //template fvec4;
 
     using fmat2 = glm::tmat2x2<Float>;
-    template fmat2;
+   // template fmat2;
 
     using fmat2x2 = glm::tmat2x2<Float>;
-    template fmat2x2;
+    //template fmat2x2;
 
     using fmat2x3 = glm::tmat2x3<Float>;
-    template fmat2x3;
+   // template fmat2x3;
 
     using fmat2x4 = glm::tmat2x4<Float>;
-    template fmat2x4;
+    //template fmat2x4;
 
     using fmat3 = glm::tmat3x3<Float>;
-    template fmat3;
+    //template fmat3;
     using fmat3x2 = glm::tmat3x2<Float>;
-    template fmat3x2;
+    //template fmat3x2;
     using fmat3x3 = glm::tmat3x3<Float>;
-    template fmat3x3;
+    //template fmat3x3;
     using fmat3x4 = glm::tmat3x4<Float>;
     
-    template fmat3x4;
+    //template fmat3x4;
     using fmat4 = glm::tmat4x4<Float>;
-    template fmat4;
+    //template fmat4;
     using fmat4x2 = glm::tmat4x2<Float>;
-    template fmat4x2;
+    //template fmat4x2;
     using fmat4x3 = glm::tmat4x3<Float>;
-    template fmat4x3;
+    //template fmat4x3;
     using fmat4x4 = glm::tmat4x4<Float>;
-    template fmat4x4;
+    //template fmat4x4;
 
 }
 
@@ -115,10 +115,11 @@ namespace gpc {
 
 
     template <class To, class From>
-    typename std::enable_if_t<sizeof(To) == sizeof(From) &&
-        std::is_trivially_copyable_v<From> &&
-        std::is_trivially_copyable_v<To>,
-        To>
+    typename std::enable_if_t<sizeof(To) == sizeof(From) 
+		&& std::is_trivially_copyable_v<From> 
+		&& std::is_trivially_copyable_v<To>
+        , To
+	>
         bit_cast(const From& src) noexcept {
         static_assert(std::is_trivially_constructible_v<To>,
             "This implementation requires the destination type to be trivially "

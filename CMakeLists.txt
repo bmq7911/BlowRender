@@ -3,7 +3,7 @@ project ( BlowRender )
 set(CMAKE_BUILD_TYPE "Debug" )
 	
 
-set( CMAKE_CXX_STANDARD 11)
+set( CMAKE_CXX_STANDARD 17)
 set( CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 if(MSVC)
@@ -11,6 +11,7 @@ set_property( GLOBAL PROPERTY USE_FOLDERS ON)
 add_compile_options(/wd4819 /wd4100 /wd4244 /wd4189 /wd4200 /wd4815 )
 add_definitions(-D _CRT_SECURE_NO_WARNINGS)
 endif( MSVC)
+
 
 macro(source_group_by_dir source_files)
     if(MSVC)
@@ -34,6 +35,7 @@ macro(source_group_by_dir source_files)
         endforeach(sgbd_file)
     endif(MSVC)
 endmacro(source_group_by_dir)
+
 
 function( CreateStaticLibraryProject  lib_name dir include_dir link_libs depends_lib )
     project( ${lib_name})
@@ -70,6 +72,9 @@ set( TEST_VARIABLE "hello cmake")
 list( APPEND EXTRA_LIB glad "${glfw_lib}")
 
 #2. set compiler optionslist( APPEND EXTRA_INCLUDE "${CMAKE_SOURCE_DIR}/third/glfw-3.2.1/include")
+
+
+list( APPEND EXTRA_INCLUDE "${CMAKE_SOURCE_DIR}/third/glfw-3.2.1/include")
 list( APPEND EXTRA_INCLUDE "${CMAKE_SOURCE_DIR}/third/glad" "${CMAKE_SOURCE_DIR}/third/glm" )
 list( APPEND EXTRA_INCLUDE "${CMAKE_SOURCE_DIR}/third")
 

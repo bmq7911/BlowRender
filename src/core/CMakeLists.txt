@@ -1,11 +1,6 @@
 project( "core" )
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
-SET(CMAKE_BUILD_TYPE "Release")
-list(APPEND CMAKE_CXX_FLAGS "-std=c++17")
-if (WIN32)
-	add_definitions(/Zi)
-endif(WIN32)
 
 
 

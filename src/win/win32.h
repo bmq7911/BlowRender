@@ -2,37 +2,12 @@
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif ///NOMIXMAX
-#include <windows.h>
 #include <memory>
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "Graphics/Framebuffer.h"
 
 namespace win {
-	class Watch{
-	public:
-		Watch() {
-			QueryPerformanceFrequency(&m_freq);
-		}
-		
-		void start(){
-			QueryPerformanceCounter(&m_begin);
-		}
-		
-		long long end(){
-			 QueryPerformanceCounter(&m_end);
-			 return m_end.QuadPart - m_begin.QuadPart;
-		}
-		
-		double toTime( long long t ){
-			return (double)t / double( m_freq.QuadPart);	
-		}
-		
-	private:
-		LARGE_INTEGER m_freq;
-		LARGE_INTEGER m_begin;
-		LARGE_INTEGER m_end;	
-	};	
 	
     class BlowWindow {
     public:
