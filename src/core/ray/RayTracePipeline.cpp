@@ -24,36 +24,49 @@ namespace gpc {
         m_scene = scene;
     }
 
-    void RayTracePipeline::draw() {
-        ///
-        for (uint32_t j = 0; j < m_camera->YCount(); ++j) {
-            for (uint32_t i = 0; i < m_camera->XCount(); ++i) {
-                Ray ray = m_camera->at(i, j);
-                Float t = std::numeric_limits<Float>::max();
-                glm::fvec3 normal;
-                auto obj = m_scene->hit(ray,t, normal );
-                if (nullptr != obj) { /// 有可能是光源
-                    
-                }
-                glm::vec4 color = m_scene->CollectColor(ray);
-                m_fbo->draw_point(i, j, 1.0f, ConvertColor(color));
-            }
-        }
-    }
-
-    void RayTracePipeline::draw(uint32_t x, uint32_t y, glm::vec4 color) {
+    void RayTracePipeline::draw(uint32_t x, uint32_t y, glm::fvec4 color) {
         m_fbo->draw_point(x, y, 1.0f, ConvertColor(color));
     }
 
     gpc::scene* RayTracePipeline::getScene() {
         return m_scene.get();
     }
+
+    glm::fvec4 RayTracePipeline::collectColor(Ray const& ray, Float& t, glm::fvec3& normal) {
+        if (greaterRayMaxDistance(t)) {
+            return glm::fvec4(Float(0), Float(0), Float(0), Float(0));
+        }
+        Float length = std::numeric_limits<Float>::max();
+        auto obj = m_scene->hit(ray, length, normal);
+        if (nullptr != obj) {
+            if (m_scene->isLight(obj)) {
+                /// 遇到光源了,说明会被照亮,这里我们如何计算这个信息呢,第一种也就是碰撞表
+                
+                /// 
+            }
+            else { /// 没遇到光源
+                t += length;
+                glm::fvec3 rray_dir = glm::reflect(ray.d(), normal);
+                Ray rray(ray.at(t), rray_dir);
+                return collectColor(rray, t, normal);
+            }
+        }
+    }
+
     uint32_t RayTracePipeline::doTask(Tid3 const& tid) {
         Ray ray = m_camera->at(tid.x, tid.y);
-        glm::vec4 color = m_scene->CollectColor(ray);
-        m_fbo->draw_point(tid.y, tid.x, 1.0f, ConvertColor(color));
+        Float t = std::numeric_limits<Float>::max();
+        glm::fvec3 normal;
+        glm::fvec4 color = collectColor(ray, t, normal);
+        draw(tid.x, tid.y, color);
         return 0;
     }
+
+
+    bool RayTracePipeline::greaterRayMaxDistance(Float t) const {
+        return true;
+    }
+
     Dim3 RayTracePipeline::getTaskDim() const{
         Dim3 size;
         size.x = m_width;
@@ -61,6 +74,7 @@ namespace gpc {
         size.z = 1;
         return size;
     }
+
     glm::vec4i8 RayTracePipeline::ConvertColor(glm::vec4 const& src) {
         glm::vec4i8 color;
         color.x = int8_t(src.x * 255.0f + 0.5f);
