@@ -218,17 +218,20 @@ namespace win {
         vertex_shader = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vertex_shader, 1, &vertex_shader_text, NULL);
         glCompileShader(vertex_shader);
-
+	std::cout << "Vertex shader = " << vertex_shader << std::endl;
         fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
         glShaderSource(fragment_shader, 1, &fragment_shader_text, NULL);
         glCompileShader(fragment_shader);
+	std::cout << "Fragment shader = " << fragment_shader << std::endl;
 
         m_program = glCreateProgram();
         glAttachShader(m_program, vertex_shader);
         glAttachShader(m_program, fragment_shader);
         glLinkProgram(m_program);
-        glDeleteShader(vertex_shader);
-        glDeleteShader(fragment_shader);
+	auto error = glGetError();
+	std::cout << "Error = "<< error<< std::endl;
+        //glDeleteShader(vertex_shader);
+        //glDeleteShader(fragment_shader);
 
 
 
@@ -254,10 +257,10 @@ namespace win {
         
         if (m_attchFramebuffer && nullptr != m_data) {
             m_attchFramebuffer->toData(m_data);
+			glUseProgram(m_program);
             glTextureSubImage2D( m_texture2d, 0,0,0, m_width,m_height, GL_RGBA, GL_UNSIGNED_BYTE, m_data);
             glBindTexture(GL_TEXTURE_2D, m_texture2d);
             glActiveTexture(GL_TEXTURE0);
-			glUseProgram(m_program);
 			glBindVertexArray( m_VAO);
 			glDrawArrays(GL_TRIANGLES, 0, 6);
         }

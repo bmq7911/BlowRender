@@ -1,8 +1,5 @@
 cmake_minimum_required(VERSION 3.00)
 project( drawLine)
-add_compile_options(/wd4819)
-
-add_definitions( -D _CRT_SECURE_NO_WARNINGS)
 
 add_executable( drawLine main.cpp Rasterizate.cpp RayTrace.cpp  )
 target_include_directories( drawLine PRIVATE "${CMAKE_CURRNET_SOURCE_DIR}"

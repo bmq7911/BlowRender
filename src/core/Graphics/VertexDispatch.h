@@ -22,13 +22,14 @@ namespace gpc {
     template<typename V, typename _FI, typename I = uint32_t>
     class VertexDispatch_point : public VertexDispatch<V,_FI, I> {
     public:
+	using super=VertexDispatch<V,_FI,I>;
         VertexDispatch_point()
             : m_index(0)
         {
         }
         bool dispatch(primitive<_FI> & v) {
-            if (m_index < m_vertexBuffer->size()) {
-                v = m_primitiveBuffer.at(m_index);
+            if (m_index < super::m_vertexBuffer->size()) {
+                v =super::m_primitiveBuffer.at(m_index);
                 m_index++;
                 return true;
             }
@@ -41,13 +42,14 @@ namespace gpc {
     template<typename V, typename _FI,typename I = uint32_t>
     class VertexDispatch_line : public VertexDispatch<V,_FI, I> {
     public:
+	using super = VertexDispatch<V,_FI,I>;
         VertexDispatch_line()
             :m_index(0)
         {}
         bool dispatch( primitive<_FI>& v1, primitive<_FI>& v2) {
-            if (m_index + 1 < m_vertexBuffer->size()) {
-                v1 = m_primitiveBuffer.at(m_index);
-                v2 = m_primitiveBuffer.at(m_index + 1);
+            if (m_index + 1 < super::m_vertexBuffer->size()) {
+                v1 =super::m_primitiveBuffer.at(m_index);
+                v2 =super::m_primitiveBuffer.at(m_index + 1);
                 m_index += 2;
                 return true;
             }
@@ -60,15 +62,16 @@ namespace gpc {
     template<typename V, typename _FI,typename I = uint32_t>
     class VertexDispatch_linestrip : public VertexDispatch<V, _FI,I> {
     public:
+	using super = VertexDispatch<V,_FI,I>;
         VertexDispatch_linestrip()
             : m_index(0)
         {
 
         }
         bool dispatch(primitive<_FI> & v1, primitive<_FI>& v2) {
-            if (m_index + 1 < m_vertexBuffer->size()) {
-                v1 = m_primitiveBuffer.at(m_index);
-                v2 = m_primitiveBuffer.at(m_index + 1);
+            if (m_index + 1 < super::m_vertexBuffer->size()) {
+                v1 =super::m_primitiveBuffer.at(m_index);
+                v2 =super::m_primitiveBuffer.at(m_index + 1);
                 m_index++;
                 //m_index += m_next; 
                 //m_next = m_next ^ 1; ///  0,  0 ^ 1 -> 1, 1 ^ 1 -> 0, 0 ^1 =-> 1, 1 ^1 =0, 0 ^1 = 1,
@@ -83,14 +86,15 @@ namespace gpc {
     template<typename V, typename _FI, typename I = uint32_t>
     class VertexDispatch_triangle : public VertexDispatch<V, _FI, I> {
     public:
+	using super = VertexDispatch<V,_FI,I>;
         VertexDispatch_triangle()
             : m_index(0)
         {}
         bool dispatch(primitive<_FI> & v1, primitive<_FI> & v2, primitive<_FI> & v3) {
-            if (m_index + 2 < m_vertexBuffer->size()) {
-                v1 = m_primitiveBuffer.at(m_index);
-                v2 = m_primitiveBuffer.at(m_index + 1);
-                v3 = m_primitiveBuffer.at(m_index + 2);
+            if (m_index + 2 < super::m_vertexBuffer->size()) {
+                v1 = super::m_primitiveBuffer.at(m_index);
+                v2 = super::m_primitiveBuffer.at(m_index + 1);
+                v3 = super::m_primitiveBuffer.at(m_index + 2);
                 m_index += 3;
                 return true;
             }
@@ -103,15 +107,16 @@ namespace gpc {
     template<typename V, typename _FI,typename I = uint32_t>
     class VertexDispatch_trianglestrip : public VertexDispatch<V,_FI, I> {
     public:
+	using super = VertexDispatch<V, _FI, I>;
         VertexDispatch_trianglestrip()
             : m_index(0)
         {
         }
         bool dispatch( primitive<_FI>& v1, primitive<_FI>& v2, primitive<_FI>& v3) {
-            if (m_index + 2 < m_vertexBuffer->size()) {
-                v1 = m_primitiveBuffer.at(m_index);
-                v2 = m_primitiveBuffer.at(m_index + 1);
-                v3 = m_primitiveBuffer.at(m_index + 2);
+            if (m_index + 2 <super::m_vertexBuffer->size()) {
+                v1 = super::m_primitiveBuffer.at(m_index);
+                v2 = super::m_primitiveBuffer.at(m_index + 1);
+                v3 = super::m_primitiveBuffer.at(m_index + 2);
 
                 m_index += 1;
                 return true;

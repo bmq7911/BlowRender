@@ -12,7 +12,7 @@
 #include "Graphics/Graphics.h"
 #include "log.h"
 #include "BFloat.h"
-#include "device/Device.h"
+#include "Device/Device.h"
 
 /// 发掘任务的并行性
 

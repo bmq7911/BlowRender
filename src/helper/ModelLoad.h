@@ -71,7 +71,7 @@ namespace helper {
         }
 
        
-        static Model* Model::parseModel(const char* path) {
+        static Model* parseModel(const char* path) {
             if (nullptr == path)
                 return nullptr;
             std::string strPath(path);
@@ -160,7 +160,7 @@ namespace helper {
             return nullptr;
         }
 
-        static Model* Model::_BuildModel(std::vector<glm::fvec3>const& position, std::vector<glm::fvec3> const& normals,
+        static Model* _BuildModel(std::vector<glm::fvec3>const& position, std::vector<glm::fvec3> const& normals,
             std::vector<glm::fvec2> const& texcoords, std::vector<glm::ivec3> const& faces,
             std::vector<glm::fvec4> const& tangent, std::vector<glm::fvec4> const& joint,
             std::vector<glm::fvec4>const& weight) {

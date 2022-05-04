@@ -2,11 +2,12 @@
 #include <algorithm>
 #include "BFloat.h"
 #include "glm/glm.hpp"
+#include "Graphics.h"
 
 namespace gpc {
     template<typename _FI>
     struct primitive {
-        glm::vec4 pos; /// 归一化的空间坐标系
+        glm::fvec4 pos; /// 归一化的空间坐标系
         _FI       data;
     };
 
@@ -14,7 +15,7 @@ namespace gpc {
     struct fragment {
         int32_t x;
         int32_t y;
-        glm::vec4 pos;
+        glm::fvec4 pos;
         _FI       data;
     };
 
@@ -22,14 +23,14 @@ namespace gpc {
     template<typename _FI>
     class  RasterizationPoint {
     public:
-        primitive<_FI> rasterizePoint(glm::vec4 p) {
+        primitive<_FI> rasterizePoint(glm::fvec4 p) {
             if ((-1.0f <= p.x && p.x <= 1.0f) && (-1.0f <= p.y && p.y <= 1.0f)) {
                 uint32_t x = 0;
                 uint32_t y = 0;
-                _ComputeScreenIndex(p, x, y);
-                return primitive();
+                //_ComputeScreenIndex(p, x, y);
+                return primitive<_FI>();
             }
-            return primitive();
+            return primitive<_FI>();
         }
 
     private:
@@ -42,7 +43,7 @@ namespace gpc {
     template<typename _FI>
     class RasterizationLine {
     public:
-        RasterizationLine(float width, float  height)
+        RasterizationLine(Float width, Float  height)
             : m_width(width)
             , m_height(height)
         {
@@ -73,7 +74,7 @@ namespace gpc {
                 while (ret) {
                     ret = b.getDrawPos(ox, oy);
                     /// 插值
-                    float k = float(oy - y1) / float(y0 - y1);
+                    Float k = Float(oy - y1) / Float(y0 - y1);
                     fragment<_FI> f;
                     f.x = ox;
                     f.y = oy;

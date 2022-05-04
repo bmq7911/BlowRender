@@ -46,23 +46,13 @@ namespace gpc {
 
 		//// hit 表
 		bool hit(Ray& ray, glm::fvec3 & pos, glm::fvec3& normal) const {
-			if (m_aabb.hit(ray)) {
-				for (size_t i = 0; i < m_node.size(); ++i) {
 
-				}
-
-				for (size_t i = 0; i < 9; ++i) {
-					if (nullptr != m_child[i]) {
-						m_child[i]->hit(ray, pos, normal);
-					}
-				}
-			}
 		}
 
 		/// 这个递归函数一定要写好
 		void mountNode(Float gate, M* obj) {
 			AABB objAABB = obj->getBVH()->toAABB();
-			glm::tvec3 dd = m_aabb.max() - m_aabb.min();
+			glm::fvec3 dd = m_aabb.max() - m_aabb.min();
 			if (dd.x <= gate && dd.y <= gate && dd.z <= gate) {
 				m_node.push_back(obj);
 			}
@@ -92,23 +82,23 @@ namespace gpc {
 					AABB leftAABB;
 					AABB rightAABB;
 
-					Float dx = m_aabb.max.x - m_aabb.min.x;
-					Float dy = m_aabb.max.y - m_aabb.min.y;
-					Float dz = m_aabb.max.z - m_aabb.min.z;
+					Float dx = m_aabb.max().x - m_aabb.min().x;
+					Float dy = m_aabb.max().y - m_aabb.min().y;
+					Float dz = m_aabb.max().z - m_aabb.min().z;
 
 					if (dx >= dy && dx >= dz) { /// dx 最大
 						std::pair<AABB, AABB> pair = m_aabb.cuteAABB(AABB::CuteType::kX, Float(0.5));
-						leftAABB = pair.frist;
+						leftAABB = pair.first;
 						rightAABB = pair.second;
 					}
 					else if (dy >= dz) { /// dy 最大
 						std::pair<AABB, AABB> pair = m_aabb.cuteAABB(AABB::CuteType::kY, Float(0.5));
-						leftAABB = pair.frist;
+						leftAABB = pair.first;
 						rightAABB = pair.second;
 					}
 					else { /// dz
 						std::pair<AABB, AABB> pair = m_aabb.cuteAABB(AABB::CuteType::kZ, Float(0.5));
-						leftAABB = pair.frist;
+						leftAABB = pair.first;
 						rightAABB = pair.second;
 					}
 					if (nullptr == m_left && leftAABB.in(objAABB)) {

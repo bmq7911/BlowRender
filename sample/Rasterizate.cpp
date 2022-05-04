@@ -16,12 +16,12 @@ template<typename T>
 class C {
 public:
 
-    template<typename T>
-    friend C<T> operator* (C<T> const& c1, C<T> const& c2);
-    template<typename T>
-    friend C<T> operator* ( T const& v, C<T> const& c );
-    template<typename T>
-    friend C<T> operator+(C<T> const& c1, C<T> const& c2);
+    template<typename U>
+    friend C<U> operator* (C<U> const& c1, C<U> const& c2);
+    template<typename U>
+    friend C<U> operator* ( U const& v, C<U> const& c );
+    template<typename U>
+    friend C<U> operator+(C<U> const& c1, C<U> const& c2);
 
 public:
     C() 

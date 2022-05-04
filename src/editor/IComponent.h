@@ -46,7 +46,7 @@ namespace ed {
 	}
 
 	template<typename T>
-	std::shared_ptr<T> Cast(std::shared_ptr<IComponent>* component ) {
+	std::shared_ptr<T> Cast(std::shared_ptr<IComponent> component ) {
 		if (nullptr == component)
 			return nullptr;
 		if (component->getComponentType() != __component_type_trait<T>::type) {

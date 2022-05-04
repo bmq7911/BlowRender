@@ -394,24 +394,6 @@ namespace gpc {
     template<typename T, typename U = typename std::enable_if<std::is_floating_point<T>::value>::type>
     class BilinearInterpolation {
     public:
-        template<typename _T1>
-        struct float_trait {
-            using type = void;
-        };
-        template<>
-        struct float_trait<float> {
-            using type = bool;
-        };
-        template<>
-        struct float_trait<double> {
-            using type = char;
-        };
-        template<>
-        struct float_trait<long double> {
-            using type = int;
-        };
-
-    public:
         explicit BilinearInterpolation(T sm, T sn, T dm, T dn)
             : sM(sm), sN(sn), dM(dm), dN(dn)
         {
@@ -422,8 +404,8 @@ namespace gpc {
             Float tx = kM * x;
             Float ty = kN * y;
             /// 能否避免取整这个操作
-            Float ox = _Floor(tx,typename float_trait<T>::type());
-            Float oy = _Floor(ty,typename float_trait<T>::type());
+            Float ox = std::floor(tx);
+            Float oy = std::floor(ty);
 
             Float x12 = tx - ox;
             Float x11 = 1 - x12;

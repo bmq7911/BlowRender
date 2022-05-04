@@ -9,12 +9,12 @@
 namespace gpc {
 	class ProjectionCamera : public Camera {
 	public:
-		ProjectionCamera(Float Zoom, uint32_t width, uint32_t height, Float Near, Float Far, glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 fornt = glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f));
+		ProjectionCamera(Float Zoom, uint32_t width, uint32_t height, Float Near, Float Far, glm::fvec3 position = glm::fvec3(0.0f, 0.0f, 0.0f), glm::fvec3 fornt = glm::fvec3(0.0f, 0.0f, -1.0f), glm::fvec3 up = glm::fvec3(0.0f, 1.0f, 0.0f));
 		glm::fmat4 to_mat() const override;
 		glm::fmat4 to_proj() const override;
 		glm::fmat4 to_view() const override;
-		void setLookAt(glm::vec3 const& vir);
-		void setLookDir(glm::vec3 const& dir);
+		void setLookAt(glm::fvec3 const& vir);
+		void setLookDir(glm::fvec3 const& dir);
 		glm::fvec3 getLookDir() const;
 		glm::fvec3 getXV() const;
 		glm::fvec3 getYV() const;
@@ -34,7 +34,7 @@ namespace gpc {
 
 	class MoveProjectionCamera : public ProjectionCamera {
 	public:
-		MoveProjectionCamera(Float Zoom, uint32_t width, uint32_t height, Float Near, Float Far, glm::fvec3 position = glm::fvec3(0.0f, 0.0f, 10.0f), glm::vec3 lookAt = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::fvec3(0.0f, 1.0f, 0.0f))
+		MoveProjectionCamera(Float Zoom, uint32_t width, uint32_t height, Float Near, Float Far, glm::fvec3 position = glm::fvec3(0.0f, 0.0f, 10.0f), glm::fvec3 lookAt = glm::fvec3(0.0f, 0.0f, 0.0f), glm::fvec3 up = glm::fvec3(0.0f, 1.0f, 0.0f))
 			: ProjectionCamera(Zoom, width, height, Near, Far, position, lookAt, up)
 			, m_speed(1.0f)
 		{

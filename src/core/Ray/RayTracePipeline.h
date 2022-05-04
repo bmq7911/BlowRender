@@ -1,7 +1,6 @@
 #pragma once
 #include <memory>
-#include "graphics/VertexBuffer.h"
-#include "graphics/Framebuffer.h"
+#include "Graphics/Framebuffer.h"
 #include "RayCamera.h"
 #include "scene.h"
 #include "Graphics/Sphere.h"

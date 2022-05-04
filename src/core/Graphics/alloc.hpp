@@ -1,6 +1,7 @@
 #pragma once
 #include <new>
 #include <utility>
+#include <stddef.h>
 #include <stdlib.h>
 namespace gpc {
 
