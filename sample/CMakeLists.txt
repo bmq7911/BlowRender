@@ -6,8 +6,7 @@ target_include_directories( drawLine PRIVATE "${CMAKE_CURRNET_SOURCE_DIR}"
                                              "${CMAKE_SOURCE_DIR}/src/core"
                                              "${CMAKE_SOURCE_DIR}/src"
                                              "${CMAKE_SOURCE_DIR}/third/glm"
-                                             "${CMAKE_SOURCE_DIR}/third/glad"
-                                             "${CMAKE_SOURCE_DIR}/third/glfw-3.2.1/include"  )
+                                             "${CMAKE_SOURCE_DIR}/third/glad")
 
-target_link_libraries( drawLine PRIVATE BlowRender )
+target_link_libraries( drawLine PRIVATE BlowRender ${EXTRA_LIB} /home/chh/Downloads/1.3.211.0/source/Vulkan-Loader/build/loader/libvulkan.so.1)
 set_target_properties( drawLine PROPERTIES FOLDER "Sample" )

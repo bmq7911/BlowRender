@@ -1,8 +1,9 @@
 #pragma once
-#include <vector>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <vector>
+#include <string>
 #include <unordered_map>
 #include "glm/glm.hpp"
 #include "Graphics/AABB.h"
@@ -88,7 +89,7 @@ namespace helper {
             FILE* file = fopen(path, "rb");
             if (nullptr != file) {
                 while (nullptr != fgets(buffer, 1024, file)) {
-                    /// ÕâÊÇ¶¥µãÊý¾Ý
+                    /// ï¿½ï¿½ï¿½Ç¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                     glm::fvec3 aPos;
                     if (0 == strncmp(buffer, "v ", 2)) {
                         int nIterms = sscanf(buffer, "v %f %f %f",
@@ -154,7 +155,7 @@ namespace helper {
 
                 }
                 fclose(file);
-                /// ¿ªÊ¼×é½¨mesh
+                /// ï¿½ï¿½Ê¼ï¿½é½¨mesh
                 return _BuildModel(pos, normals, texcoords, faces, tangent, joint, weight);
             }
             return nullptr;

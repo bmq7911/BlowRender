@@ -38,49 +38,6 @@ namespace gpc {
         m_lightDir = glm::normalize(dir);
     }
 
-    /// 这个算法并不合理,或者不该在这里
-    /// 这个东西的并行性还是很好的
-    glm::vec4 scene::CollectColor(gpc::Ray& ray) {
-        glm::fvec3 normal;
-        Float t = std::numeric_limits<Float>::max();
-
-        /// 光线被照亮
-        if (true == m_aabb.hit(ray)) {
-            Object* obj = _HitObject(m_otree, ray, t, normal);
-            if (nullptr != obj) {
-                /// <summary>
-                /// 这里做次级反射
-                /// </summary>
-                /// <param name="ray"></param>
-                /// <returns></returns>
-                gpc::Ray second_ray(ray.at(t), glm::reflect(ray.d(), normal));
-
-                /// <summary>
-                /// 这里就是简单的递归过程,但是这个过程会很复杂,如何控制递归的层次就很复杂了
-                /// </summary>
-                /// <param name="ray"></param>
-                /// <returns></returns>
-                glm::vec4 color = CollectColor(second_ray);
-
-                /// <summary>
-                ///  这里充当了着色过程
-                /// </summary>
-                /// <param name="ray"></param>
-                /// <returns></returns>
-                Float tmp = glm::dot(-ray.d(), normal);
-                if (tmp > 0) {
-                    float c = static_cast<float>(tmp);
-                    return glm::vec4(tmp, tmp, tmp, 1.0f);
-                }
-                else {
-                    return glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
-                }
-            }
-        }
-        return glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
-        //// 这里就是背景颜色,这里就可能是一个立方体采样而已
-    }
-
     bool scene::hit(Ray const& ray) {
         return m_aabb.hit(ray);
     }
@@ -117,7 +74,7 @@ namespace gpc {
         }
         return nullptr;
     }
-    bool isLight(Object* obj) {
+    bool scene::isLight(Object* obj) {
         return false;
     }
     Object* scene::_HitObject(OTree<Object>* node,

@@ -5,7 +5,7 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "log.h"
-
+#include "VulkanEnd.h"
 
 static const struct {
     float x, y;
@@ -22,7 +22,7 @@ static const struct {
 };
 
 static const char* vertex_shader_text =
-"#version 450 core\n"
+"#version 330 core\n"
 "layout( location = 0) in vec4 aPos;\n"
 "out vec2 oTex;\n"
 "void main()\n"
@@ -32,7 +32,7 @@ static const char* vertex_shader_text =
 "}\n";
 
 static const char* fragment_shader_text =
-"#version 450 core\n"
+"#version 330 core\n"
 "in vec2 oTex;\n"
 "uniform sampler2D texFbo;\n"
 "void main()\n"
@@ -174,6 +174,11 @@ namespace win {
     }
     
     bool BlowWindow::_InitWindow(const char* title, uint32_t width, uint32_t  height) {
+        try{
+            VK::VulkanEnd end;
+        }catch( ... ){
+            
+        }
         m_width = width;
         m_height = height;
         GLuint vertex_shader, fragment_shader ;
@@ -181,8 +186,8 @@ namespace win {
             return false;
         }
 
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_SAMPLES, 4);
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE); // comment this line in a release build! 

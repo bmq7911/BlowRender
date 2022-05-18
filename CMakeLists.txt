@@ -2,11 +2,16 @@ cmake_minimum_required( VERSION 3.00 )
 project ( BlowRender )
 set(CMAKE_BUILD_TYPE "Debug" )
 	
+
+set( CMAKE_CXX_STANDARD 17)
+set( CMAKE_CXX_STANDARD_REQUIRED TRUE)
+
 if(MSVC)
-set_property( GLOBAL PROPETY USE_FOLDERS ON)
-add_compile_options(/wd4819)
+set_property( GLOBAL PROPERTY USE_FOLDERS ON)
+add_compile_options(/wd4819 /wd4100 /wd4244 /wd4189 /wd4200 /wd4815 )
 add_definitions(-D _CRT_SECURE_NO_WARNINGS)
-endif(MSVC)
+endif( MSVC)
+
 
 macro(source_group_by_dir source_files)
     if(MSVC)
@@ -32,29 +37,47 @@ macro(source_group_by_dir source_files)
 endmacro(source_group_by_dir)
 
 
+function( CreateStaticLibraryProject  lib_name dir include_dir link_libs depends_lib )
+    project( ${lib_name})
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+    file(GLOB_RECURSE PROJECT_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp ${CMAKE_CURRENT_SOURCE_DIR}/*.inl )
+    file(GLOB_RECURSE PROJECT_SOURCE  ${CMAKE_CURRENT_SOURCE_DIR}/*.c ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/*.cc ${CMAKE_CURRENT_SOURCE_DIR}/*.cxx ) 
+    
+    set( PROJECT_SRC ${PROJECT_HEADERS} ${PROJECT_SOURCE} )
+    SOURCE_GROUP_BY_DIR( PROJECT_SRC)
+    add_library( ${lib_name} STATIC ${PROJECT_SRC})
+    if(  ${include_dir} )
+        target_include_directories( ${lib_name} PRIVATE ${include_dir} )
+    endif( ${include_dir})
+    if( ${depends_lib} )
+        target_link_libraries( ${lib_name} PRIVATE ${depends_lib})
+    endif( ${depends_lib})
+    if( ${link_libs})
+        target_link_libraries( ${lib_name} PRIAVE ${link_libs})
+    endif( ${link_libs})
+
+endfunction()
+
+
+
 #1. add request library glad and glfw for to draw window
 
 add_library( glad STATIC "${CMAKE_SOURCE_DIR}/third/glad/glad/glad.c")
-add_subdirectory( third/glfw-3.2.1  )
-find_library( glfw_lib NAMES libglfw3.a glfw3.lib PATHS "${CMAKE_SOURCE_DIR}/build/third/glfw-3.2.1/src"
-	                                                    "${CMAKE_SOURCE_DIR}/build/third/glfw-3.2.1/src/Debug"
-							                            "${CMAKE_SOURCE_DIR}/build/thrid/glfw-3.2.1/src/Release") 
-
+find_library( glfw_lib NAMES  libglfw.so libglfw.so.3 PATHS "/usr/local/lib") 
 set( TEST_VARIABLE "hello cmake")
-list( APPEND EXTRA_LIB glad "${glfw_lib}")
+message( "${glfw_lib}")
+list( APPEND EXTRA_LIB "${glfw_lib}")
+
+#2. set compiler optionslist( APPEND EXTRA_INCLUDE "${CMAKE_SOURCE_DIR}/third/glfw-3.2.1/include")
 
 
-#2. set compiler options
-set( CMAKE_CXX_STANDARD 17)
-set( CMAKE_CXX_STANDARD_REQUIRED TRUE)
-
-list( APPEND EXTRA_INCLUDE "${CMAKE_SOURCE_DIR}/third/glfw-3.2.1/include")
 list( APPEND EXTRA_INCLUDE "${CMAKE_SOURCE_DIR}/third/glad" "${CMAKE_SOURCE_DIR}/third/glm" )
 list( APPEND EXTRA_INCLUDE "${CMAKE_SOURCE_DIR}/third")
 
 
 add_subdirectory(src)
 
+#3. �����豸����
 option( ENABLE_SAMPLE "Open the sample" ON )
 option( ENABLE_UNIT_TEST "Open the unit test" OFF )
 

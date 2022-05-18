@@ -3,8 +3,8 @@
 #include "RayTrace.h"
 #include "editor/MouseInputComponent.h"
 
-/// 1.ÎÒĞèÒªÔÚ´úÂëÀï×Ô¼ºÊµÏÖsseÖ¸ÁîÂğ?
-/// 2.±àÒëÆ÷ÔÚÓÅ»¯½×¶ÎÄÜ·ñ·¢ÏÖ×Ô¼ºÖ´ĞĞµÄÖ¸ÁîÊÇSSEµÄ
+/// 1.ï¿½ï¿½ï¿½ï¿½Òªï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½Êµï¿½ï¿½sseÖ¸ï¿½ï¿½ï¿½ï¿½?
+/// 2.ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å»ï¿½ï¿½×¶ï¿½ï¿½Ü·ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½Ö´ï¿½Ğµï¿½Ö¸ï¿½ï¿½ï¿½ï¿½SSEï¿½ï¿½
 void rasterizate() {
     std::shared_ptr<gpc::Device> device = std::make_shared<gpc::Device>( );
     std::shared_ptr<MyBlowWindow> window = std::make_shared<MyBlowWindow>("test",800,600, device );
@@ -24,9 +24,9 @@ void ray_trace() {
 int main(int argc, char* argv[]) {
     
     ed::IComponent* input = new ed::MouseInputComponent;
-    auto ptr = ed::Cast< ed::MouseInputComponent>(input); /// ²»ÂÛÈçºÎÎÒÃÇ¶¼ÎŞ·¨×öµ½ÕâÒ»²½,³ı·ÇÊ±Ã¿Ò»¸ö component class ¶¼ÓĞÒ»¸öid
+    auto ptr = ed::Cast< ed::MouseInputComponent>(input); /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¶ï¿½ï¿½Ş·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Ê±Ã¿Ò»ï¿½ï¿½ component class ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½id
 
-    //rasterizate();
-    ray_trace();
+    rasterizate();
+    //ray_trace();
     return 0;
 }

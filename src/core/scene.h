@@ -24,7 +24,6 @@ namespace gpc{
         void setLightDir(glm::fvec3 const& dir);
         /// 这个算法并不合理,或者不该在这里
         /// 这个东西的并行性还是很好的
-        glm::vec4 CollectColor(gpc::Ray& ray);
         bool hit(Ray const& ray);
         iterator begin();
         iterator end();

@@ -1,4 +1,5 @@
 
+
 project( "editor" )
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
@@ -14,3 +15,4 @@ source_group_by_dir( EDITOR_SRC )
 add_library( "editor" STATIC ${EDITOR_SRC} )
 target_include_directories( "editor" PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} )
 set_target_properties("editor" PROPERTIES FOLDER "BlowRender/editor" )
+
