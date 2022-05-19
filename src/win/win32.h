@@ -15,9 +15,9 @@ namespace win {
         BlowWindow(const char* title, uint32_t width, uint32_t height);
         bool attachFrmaebuffer( std::shared_ptr<gpc::Framebuffer> fbo);
         std::shared_ptr<gpc::Framebuffer> getFbo();
-        virtual void render( float passTime, float deltaTime);
-        virtual void beforeRender(float passTime, float deltaTime);
-        virtual void afterRender(float passTime, float deltaTime);
+        virtual void tick( float passTime, float deltaTime);
+        virtual void beforeTick(float passTime, float deltaTime);
+        virtual void afterTick(float passTime, float deltaTime);
         virtual void processInput( float passTime, float deltaTime);
         virtual void initScene() = 0;
         void mainloop();

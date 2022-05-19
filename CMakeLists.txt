@@ -1,7 +1,6 @@
 cmake_minimum_required( VERSION 3.00 )
 project ( BlowRender )
 set(CMAKE_BUILD_TYPE "Debug" )
-	
 
 set( CMAKE_CXX_STANDARD 17)
 set( CMAKE_CXX_STANDARD_REQUIRED TRUE)
@@ -10,7 +9,13 @@ if(MSVC)
 set_property( GLOBAL PROPERTY USE_FOLDERS ON)
 add_compile_options(/wd4819 /wd4100 /wd4244 /wd4189 /wd4200 /wd4815 )
 add_definitions(-D _CRT_SECURE_NO_WARNINGS)
+set(VULKAN_PATH "C:/VulkanSDK/1.3.211.0")
+set(VULKAN_LIB "${VULKAN_PATH}/Lib/Vulkan-1.lib")
+else()
+set(VULKAN_LIB "/home/chh/Downloads/1.3.211.0/source/Vulkan-Loader/build/loader/libvulkan.so.1")
 endif( MSVC)
+
+
 
 
 macro(source_group_by_dir source_files)
@@ -61,23 +66,29 @@ endfunction()
 
 
 #1. add request library glad and glfw for to draw window
+list( APPEND EXTRA_INCLUDE "${CMAKE_SOURCE_DIR}/third/glad" "${CMAKE_SOURCE_DIR}/third/glm" )
+list( APPEND EXTRA_INCLUDE "${CMAKE_SOURCE_DIR}/third")
 
 add_library( glad STATIC "${CMAKE_SOURCE_DIR}/third/glad/glad/glad.c")
+if(MSVC)
+add_subdirectory( third/glfw)
+list( APPEND EXTRA_INCLUDE "${CMAKE_SOURCE_DIR}/third/glfw/include" )
+set(glfw_lib glfw)
+else()
 find_library( glfw_lib NAMES  libglfw.so libglfw.so.3 PATHS "/usr/local/lib") 
-set( TEST_VARIABLE "hello cmake")
+endif(MSVC)
 message( "${glfw_lib}")
 list( APPEND EXTRA_LIB "${glfw_lib}")
 
 #2. set compiler optionslist( APPEND EXTRA_INCLUDE "${CMAKE_SOURCE_DIR}/third/glfw-3.2.1/include")
 
 
-list( APPEND EXTRA_INCLUDE "${CMAKE_SOURCE_DIR}/third/glad" "${CMAKE_SOURCE_DIR}/third/glm" )
-list( APPEND EXTRA_INCLUDE "${CMAKE_SOURCE_DIR}/third")
+
 
 
 add_subdirectory(src)
 
-#3. �����豸����
+#3.
 option( ENABLE_SAMPLE "Open the sample" ON )
 option( ENABLE_UNIT_TEST "Open the unit test" OFF )
 

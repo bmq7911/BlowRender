@@ -14,6 +14,7 @@
 #include "Graphics/AABB.h"
 #include "Ray/RayTracePipeline.h"
 #include "scene.h"
+#include "rui/widget_container.h"
 /*
  * 坐标结构是 ^ y
  *           |
@@ -207,7 +208,7 @@ public:
 class MyBlowWindow : public win::BlowWindow {
 public:
     MyBlowWindow(const char* title, uint32_t width, uint32_t height, std::shared_ptr<gpc::Device> device);
-    void render(float passTime, float deltaTime) override;
+    void tick(float passTime, float deltaTime) override;
     void initScene();
     void initAABB();
     void drawAABB( gpc::AABB const & aabb);
@@ -235,4 +236,5 @@ private:
     std::shared_ptr<gpc::OTree<gpc::Object>> m_aabbTree;
     std::shared_ptr<gpc::scene> m_scene;
     std::shared_ptr<gpc::Device> m_device;
+    std::shared_ptr<rui::widget_container> m_container;
 };

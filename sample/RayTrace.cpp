@@ -14,7 +14,7 @@ void RayTraceBlowWindow::initScene() {
 
 }
 
-void RayTraceBlowWindow::render(float passTime, float deltaTime)  {
+void RayTraceBlowWindow::tick(float passTime, float deltaTime)  {
 	auto fbo = getFbo( );
 	fbo->clear({ 255,255,255,0 });
 	

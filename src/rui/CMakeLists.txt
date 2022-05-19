@@ -1,20 +1,18 @@
-
 project( "rui" )
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 SET(CMAKE_BUILD_TYPE "Release")
 if(MSVC)
 	list(APPEND CMAKE_CXX_FLAGS "/std=c++17")
+    set_property( GLOBAL PROPERTY USE_FOLDERS ON)
+    add_compile_options(/wd4819 /wd4100 /wd4244 /wd4189 /wd4200 /wd4815 )
 else()
 	list(APPEND CMAKE_CXX_FLAGS "-std=c++17")
-
 endif() # if(MSVC)
 if (WIN32)
 	add_definitions(/Zi)
 endif(WIN32)
 
-set_property( GLOBAL PROPERTY USE_FOLDERS ON)
-add_compile_options(/wd4819 /wd4100 /wd4244 /wd4189 /wd4200 /wd4815 )
 
 macro(source_group_by_dir source_files)
     if(MSVC)
@@ -39,18 +37,17 @@ macro(source_group_by_dir source_files)
     endif(MSVC)
 endmacro(source_group_by_dir)
 
-file(GLOB_RECURSE WIN_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp ${CMAKE_CURRENT_SOURCE_DIR}/*.inl )
-file(GLOB_RECURSE WIN_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/*.c)
+file(GLOB_RECURSE RUI_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp ${CMAKE_CURRENT_SOURCE_DIR}/*.inl )
+file(GLOB_RECURSE RUI_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/*.c)
 
 
 
-set( WIN_SRC ${WIN_HEADERS} ${WIN_SOURCES}  )
+set( RUI_SRC ${RUI_HEADERS} ${RUI_SOURCES}  )
 
 source_group_by_dir( WIN_SRC )
 
-add_library( "rui" STATIC ${WIN_SRC} )
-target_include_directories( "rui" PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} "${CMAKE_SOURCE_DIR}/src" "${CMAKE_SOURCE_DIR}/src/core" 
-                                          "${CMAKE_SOURCE_DIR}/third/glm")
+add_library( "rui" STATIC ${RUI_SRC} )
+target_include_directories( "rui" PRIVATE "${CMAKE_SOURCE_DIR}/third/glm")
 
 target_link_libraries( "rui" PRIVATE  )
-set_target_properties(win PROPERTIES FOLDER "BlowRender/rui" )
+set_target_properties("rui" PROPERTIES FOLDER "BlowRender/rui" )

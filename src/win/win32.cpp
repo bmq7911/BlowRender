@@ -129,7 +129,7 @@ namespace win {
 
     bool BlowWindow::attachFrmaebuffer(std::shared_ptr<gpc::Framebuffer> fbo) {
         uint32_t size = fbo->getWidth() * fbo->getHeight() * sizeof(gpc::Framebuffer::value_type);
-	using BYTE=uint8_t;
+	    using BYTE=uint8_t;
         m_data = (BYTE*)realloc(m_data, size);
         m_attchFramebuffer = fbo;
         return true;
@@ -139,15 +139,15 @@ namespace win {
         return m_attchFramebuffer;
     }
     
-    void BlowWindow::render( float passTime, float deltaTime) {
+    void BlowWindow::tick( float passTime, float deltaTime) {
         _SwapFrame();
     }
 
-    void BlowWindow::beforeRender(float passTime, float deltaTime) {
+    void BlowWindow::beforeTick(float passTime, float deltaTime) {
     
     }
 
-    void BlowWindow::afterRender(float passTime, float deltaTime) {
+    void BlowWindow::afterTick(float passTime, float deltaTime) {
     
     }
 
@@ -160,8 +160,8 @@ namespace win {
         float deltaTime = 0.0f;
         while (!glfwWindowShouldClose(m_window)) {
             processInput( passTime, deltaTime );
-            render(passTime, deltaTime);
-            BlowWindow::render( passTime , deltaTime);
+            tick(passTime, deltaTime);
+            BlowWindow::tick( passTime , deltaTime);
         }
         return;
     }

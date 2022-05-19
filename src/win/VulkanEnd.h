@@ -36,11 +36,11 @@ namespace VK{
         std::string m_msg;
     };
     
-    class VukandShader{
+    class VulkanShader{
     public:
         VulkanShader( );
         VkShaderModule getShaderModule() const;
-        VkShaderStageFlagsBits getShaderStageFlagBits()const;
+        VkShaderStageFlagBits getShaderStageFlagBits()const;
         const char * getEntryName() const;
     private:
         VkShaderModule m_shaderModule;
