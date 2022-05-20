@@ -47,7 +47,7 @@ set( RUI_SRC ${RUI_HEADERS} ${RUI_SOURCES}  )
 source_group_by_dir( WIN_SRC )
 
 add_library( "rui" STATIC ${RUI_SRC} )
-target_include_directories( "rui" PRIVATE "${CMAKE_SOURCE_DIR}/third/glm")
+target_include_directories( "rui" PRIVATE "${CMAKE_SOURCE_DIR}/third/glm" "${CMAKE_SOURCE_DIR}/src/core")
 
 target_link_libraries( "rui" PRIVATE  )
 set_target_properties("rui" PROPERTIES FOLDER "BlowRender/rui" )

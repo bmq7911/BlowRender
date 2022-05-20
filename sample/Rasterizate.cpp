@@ -132,8 +132,7 @@ MyBlowWindow::MyBlowWindow(const char* title, uint32_t width, uint32_t height, s
 {
     m = std::make_shared<glm::mat4>();
     std::shared_ptr<gpc::Framebuffer> frame = std::make_shared<gpc::Framebuffer>(gpc::Framebuffer(width, height));
-    m_container = std::make_shared<rui::widget_container>( m_device , frame );
-
+    m_ruiRoot = std::make_shared<rui::widget_tree>(device, frame);
     attachFrmaebuffer(frame);
 }
 
@@ -144,8 +143,9 @@ void MyBlowWindow::tick(float passTime, float deltaTime)  {
     fbo->clearDepth(1.0f);
     const static float speed = 2.0f * 3.1415926f / 50.0f;
 
-    m_juliaPipeline->draw(gpc::PrimitiveType::kTriangle);
-    m_container->tick(passTime, deltaTime);
+    //m_juliaPipeline->draw(gpc::PrimitiveType::kTriangle);
+    //m_container->tick(passTime, deltaTime);
+    m_ruiRoot->tick(passTime, deltaTime);
 }
 
 

@@ -13,6 +13,17 @@ namespace rui {
 			: m_postion( x, y)
 			, m_size( width, height)
 		{}
+		widget_rect(widget_rect const& rect) {
+			m_postion = rect.m_postion;
+			m_size = rect.m_size;
+		}
+		widget_rect& operator=(widget_rect const& rect) {
+			if (this != &rect) {
+				m_postion = rect.m_postion;
+				m_size = rect.m_size;
+			}
+			return *this;
+		}
 
 		uint32_t x() const {
 			return m_postion.x;

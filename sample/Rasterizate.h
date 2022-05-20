@@ -14,7 +14,8 @@
 #include "Graphics/AABB.h"
 #include "Ray/RayTracePipeline.h"
 #include "scene.h"
-#include "rui/widget_container.h"
+
+#include "rui/widget_root.h"
 /*
  * 坐标结构是 ^ y
  *           |
@@ -236,5 +237,5 @@ private:
     std::shared_ptr<gpc::OTree<gpc::Object>> m_aabbTree;
     std::shared_ptr<gpc::scene> m_scene;
     std::shared_ptr<gpc::Device> m_device;
-    std::shared_ptr<rui::widget_container> m_container;
+    std::shared_ptr<rui::widget_tree>      m_ruiRoot;
 };
