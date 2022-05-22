@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <glm/glm.hpp>
 
 namespace gpc {
 	template<typename T>
@@ -18,7 +19,10 @@ namespace gpc {
 		static AABB2d makeAABB2d(std::vector<glm::tvec2<T>> const& points) {
 			
 		}
+		static bool isIntersect( AABB2d const& aabb1, AABB2d const& aabb2){
+			 return !(aabb1.maxX() <= aabb2.minX() || aabb1.minX() >= aabb2.maxX() || aabb1.maxY() <= aabb2.minY() || aabb1.minY() >= aabb2.maxY());
 
+		}
 		T width() const {
 			return _Width( std::declval<typename std::conditional<std::is_floating_point<T>::value, int, char>::type>() );
 		}

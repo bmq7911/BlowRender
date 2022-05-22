@@ -391,6 +391,8 @@ namespace gpc {
         Float m_top, m_buttom;
     };
 
+    
+
     template<typename T, typename U = typename std::enable_if<std::is_floating_point<T>::value>::type>
     class BilinearInterpolation {
     public:

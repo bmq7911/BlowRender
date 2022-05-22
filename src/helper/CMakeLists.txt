@@ -12,5 +12,5 @@ source_group_by_dir( HELPER_SRC )
 
 add_library( "helper" STATIC ${HELPER_SRC} )
 target_include_directories( "helper" PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} "${CMAKE_SOURCE_DIR}/src/core" )
-target_include_directories( "helper" PRIVATE "${CMAKE_SOURCE_DIR}/third/glm"  "${CMAKE_SOURCE_DIR}/third/stb-image" "${CMAKE_SOURCE_DIR}/MyLibs")
+target_include_directories( "helper" PRIVATE "${CMAKE_SOURCE_DIR}/third/glm" "${CMAKE_SOURCE_DIR}/third" "${CMAKE_SOURCE_DIR}/MyLibs")
 set_target_properties(helper PROPERTIES FOLDER "BlowRender/helper" )
