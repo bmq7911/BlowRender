@@ -7,6 +7,8 @@
 #include "widget_vertex.h"
 #include "Rasterize/RasterizePipeline.h"
 #include "Graphics/VertexShader.h"
+#include "widget_shape.h"
+
 
 namespace rui {
 

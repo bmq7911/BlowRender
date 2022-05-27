@@ -59,7 +59,7 @@ namespace gpc {
 		uint32_t size = std::thread::hardware_concurrency();
 		m_coreRunCount = size;
 		for (size_t i = 0; i < size; ++i) {
-			m_executeCore.push_back(std::make_shared<Device::ExecuteCore>( i, this,&m_sleepCore,&m_wakeUpCore));
+			m_executeCore.push_back(std::make_shared<Device::ExecuteCore>( uint32_t(i), this,&m_sleepCore,&m_wakeUpCore));
 		}
 	}
 	
@@ -68,7 +68,7 @@ namespace gpc {
 			_WaitAllExecuteCoreWorkDone();
 		}
 		m_taskIssues = taskIssue;
-		m_coreRunCount = m_executeCore.size();
+		m_coreRunCount = uint32_t(m_executeCore.size());
 		m_taskIssues->init( m_coreRunCount );
 		m_wakeUpCore.notify_all();
 	}

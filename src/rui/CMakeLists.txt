@@ -13,7 +13,6 @@ if (WIN32)
 	add_definitions(/Zi)
 endif(WIN32)
 
-
 macro(source_group_by_dir source_files)
     if(MSVC)
         set(sgbd_cur_dir ${CMAKE_CURRENT_SOURCE_DIR})

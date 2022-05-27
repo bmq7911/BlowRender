@@ -199,13 +199,13 @@ namespace VK{
         }
     }
     bool             VulkanEnd::_IsSupportGraphics( VkQueueFamilyProperties & properties ){
-        return 0 != properties.queueFlags & VK_QUEUE_GRAPHICS_BIT;
+        return 0 != (properties.queueFlags & VK_QUEUE_GRAPHICS_BIT);
     }
     bool             VulkanEnd::_IsSupportCompute( VkQueueFamilyProperties & properties ){
-        return 0 != properties.queueFlags & VK_QUEUE_COMPUTE_BIT;
+        return 0 != (properties.queueFlags & VK_QUEUE_COMPUTE_BIT);
 
     }
     bool             VulkanEnd::_IsSupportTransfer( VkQueueFamilyProperties & properties ){
-        return 0 != properties.queueFlags & VK_QUEUE_TRANSFER_BIT;
+        return 0 != (properties.queueFlags & VK_QUEUE_TRANSFER_BIT);
     }
 }

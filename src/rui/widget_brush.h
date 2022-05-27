@@ -1,13 +1,15 @@
 #pragma once
 #include <memory>
 #include "widget_color.h"
-#include "Graphics/FragmentShader.h"
-#include "widget_vertex.h"
+#include "widget_painter.h"
+
 namespace rui {
-	class widget_brush {
+	
+	class widget_brush  : public iwidget_painter{
 	public:
 		virtual std::shared_ptr<gpc::FragmentShader<widget_vertex>> get_fragment_shader() const = 0;
 	};
+
 	class widget_color_brush : public widget_brush {
 	public:
 		class widget_fragment_shader : public gpc::FragmentShader<widget_vertex> {

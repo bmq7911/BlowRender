@@ -93,7 +93,7 @@ namespace gpc {
         }
         Dim3 getTaskDim() const override{
             Dim3 size;
-            size.x = m_primitives.size();
+            size.x = uint32_t(m_primitives.size());
             size.y = 1;
             size.z = 1;
             return size;
@@ -173,7 +173,7 @@ namespace gpc {
         void init(uint32_t count) override {
 
             RasterizationLine<_FI> RL( m_width, m_height );
-            uint32_t vertexCount = RL.count(m_rs, m_re);
+            uint32_t vertexCount = uint32_t(RL.count(m_rs, m_re));
             if (vertexCount < count) {
                 m_segs.push_back( std::make_pair(m_rs, m_re));
                 m_count = 1;
