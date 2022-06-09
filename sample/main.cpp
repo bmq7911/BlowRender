@@ -3,8 +3,6 @@
 #include "RayTrace.h"
 #include "editor/MouseInputComponent.h"
 
-/// 1.����Ҫ�ڴ������Լ�ʵ��sseָ����?
-/// 2.���������Ż��׶��ܷ����Լ�ִ�е�ָ����SSE��
 void rasterizate() {
     std::shared_ptr<gpc::Device> device = std::make_shared<gpc::Device>( );
     std::shared_ptr<MyBlowWindow> window = std::make_shared<MyBlowWindow>("test",800,600, device );
@@ -24,7 +22,7 @@ void ray_trace() {
 int main(int argc, char* argv[]) {
     
     ed::IComponent* input = new ed::MouseInputComponent;
-    auto ptr = ed::Cast< ed::MouseInputComponent>(input); /// ����������Ƕ��޷�������һ��,����ʱÿһ�� component class ����һ��id
+    auto ptr = ed::Cast< ed::MouseInputComponent>(input); 
 
     rasterizate();
     //ray_trace();

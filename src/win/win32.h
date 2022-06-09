@@ -29,6 +29,7 @@ namespace win {
         void _SwapFrame();
         static void _MouseCallback(GLFWwindow* window, double xpos, double ypos);
         static void _ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+        virtual void _InitIMGUI();
     private:
         uint32_t m_width;
         uint32_t m_height;

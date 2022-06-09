@@ -1,5 +1,9 @@
 #include <iostream>
 #include "Rasterizate.h"
+#include "imgui/imgui.h"
+#include "imgui/backends/imgui_impl_glfw.h"
+#include "imgui/backends/imgui_impl_opengl3.h"
+
 
 class JuliaVertexShader : public gpc::VertexShader<glm::vec2, glm::vec4> {
 public:
@@ -12,100 +16,20 @@ public:
     }
 };
 
-template<typename T>
-class C {
-public:
-
-    template<typename U>
-    friend C<U> operator* (C<U> const& c1, C<U> const& c2);
-    template<typename U>
-    friend C<U> operator* ( U const& v, C<U> const& c );
-    template<typename U>
-    friend C<U> operator+(C<U> const& c1, C<U> const& c2);
-
-public:
-    C() 
-        : m_r(T{})
-        , m_i(T{})
-    {
-    }
-    C(T r, T i ) 
-        : m_r( r)
-        , m_i( i)
-    {}
-    C( const C & c) {
-        m_r = c.m_r;
-        m_i = c.m_i;
-    }
-    C& operator=(C const& c) {
-        m_r = c.m_r;
-        m_i = c.m_i;
-        return *this;
-    }
-
-    T r() const {
-        return m_r;
-    }
-    T i() const {
-        return m_i;
-    }
-    T length() const {
-    
-    }
-    T length2() const {
-        return m_r * m_r + m_i * m_i;
-    }
-    C& operator *=(T const* v) {
-        m_r *= v;
-        m_i *= v;
-        return *this;
-    }
-    C& operator+=(C const& t) {
-        m_r += t.m_r;
-        m_i += t.m_i;
-        return *this;
-    }
-    C& operator-=(C const& t) {
-        m_r -= t.m_r;
-        m_i -= t.m_i;
-        return *this;
-    }
-
-private:
-    T m_r;
-    T m_i;
-};
-
-template<typename T>
-C<T> operator+(C<T> const& c1, C<T> const& c2) {
-    C<T> c;
-    c.m_r = c1.m_r + c2.m_r;
-    c.m_i = c1.m_i + c2.m_i;
-    return c;
-}
-
-template<typename T>
-C<T> operator* (C<T> const& c1, C<T> const& c2) {
-    C<T> c;
-    c.m_r = c1.m_r * c2.m_r - c1.m_i * c2.m_i;
-    c.m_i = c1.m_r * c2.m_i + c1.m_i * c2.m_r;
-    return c;
-}
-template<typename T>
-C<T> operator* ( T const& v , C<T> const& c ){
-    C<T> t;
-    t.m_r = v * c.m_r;
-    t.m_i = v * c.m_i;
-    return t;
-}
-
 class JuliaFragmentShader : public gpc::FragmentShader<glm::vec4>{
 public:
+    JuliaFragmentShader(C<float>* c, C<float>* t)
+        : m_c(c)
+        , m_t(t)
+    {
+
+    }
+
     glm::vec4 execute(gpc::fragment< glm::vec4>  const& v) override {
 
-        C<float> c( 3.2f * (v.pos.x + 1.0f)/2.0f - 1.6f,
-                    2.4f *( v.pos.y + 1.0f)/2.0f - 1.2f);
-        C<float> t(-0.75f, 0.0f);
+        C<float> c( m_c->r() * (v.pos.x + 1.0f) / 2.0f - 1.6f,
+                    m_c->i() * (v.pos.y + 1.0f) / 2.0f - 1.2f);
+        C<float> t( m_t->r(), m_t->i());
 
         size_t k = 0;
         for ( k = 0; k < 256; ++k) {
@@ -115,21 +39,26 @@ public:
             c = c * c + t;
         }
         if (k == 256) {
-            return glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+            return glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
         }
         else {
             return glm::vec4( k / 255.0f ,k / 255.0f, k / 255.0f , 1.0f );
         }
 
     }
-
+private:
+    C<float>* m_c;
+    C<float>* m_t;
 };
 
 
 MyBlowWindow::MyBlowWindow(const char* title, uint32_t width, uint32_t height, std::shared_ptr<gpc::Device> device)
     : win::BlowWindow(title, width, height)
     , m_device( device )
+    , m_c( 3.2f, 2.4f )
+    , m_t( -0.75f, 0.0f )
 {
+   
     m = std::make_shared<glm::mat4>();
     std::shared_ptr<gpc::Framebuffer> frame = std::make_shared<gpc::Framebuffer>(gpc::Framebuffer(width, height));
     m_ruiRoot = std::make_shared<rui::widget_tree>(device, frame);
@@ -143,11 +72,46 @@ void MyBlowWindow::tick(float passTime, float deltaTime)  {
     fbo->clearDepth(1.0f);
     const static float speed = 2.0f * 3.1415926f / 50.0f;
 
-    //m_juliaPipeline->draw(gpc::PrimitiveType::kTriangle);
+    m_juliaPipeline->draw(gpc::PrimitiveType::kTriangle);
     //m_container->tick(passTime, deltaTime);
-    m_ruiRoot->tick(passTime, deltaTime);
+    //m_ruiRoot->tick(passTime, deltaTime);
+
+    _tickIMGUI(passTime, deltaTime);
+    
 }
 
+void MyBlowWindow::_tickIMGUI(float passTime, float deltaTime) {
+    static float f = 0.0f;
+    static int counter = 0;
+    static bool show_demo_window = true;
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+
+    ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+    ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+    float cr = m_c.r();
+    float ci = m_c.i();
+    float tr = m_t.r();
+    float ti = m_t.i();
+    ImGui::SliderFloat("c.r", &cr, -4.0f, 4.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+    ImGui::SliderFloat("c.i", &ci, -4.0f, 4.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+
+    ImGui::SliderFloat("t.r", &tr, -4.0f, 4.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+    ImGui::SliderFloat("t.i", &ti, -4.0f, 4.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+   
+    m_c = C<float>(cr, ci);
+    m_t = C<float>(tr, ti);
+    if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+        counter++;
+    ImGui::SameLine();
+    ImGui::Text("counter = %d", counter);
+
+    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+    ImGui::End();
+}
 
 void MyBlowWindow::initScene() {
     
@@ -296,10 +260,15 @@ void MyBlowWindow::_InitJuliaSence() {
     m_juliaPipeline->bindVertexBuffer( m_vertexJulia );
     m_juliaPipeline->bindFramebuffer(getFbo());
     m_juliaPipeline->bindVertexShader( std::make_shared<JuliaVertexShader>());
-    m_juliaPipeline->bindFragmentShader(std::make_shared<JuliaFragmentShader>());
+    m_juliaPipeline->bindFragmentShader(std::make_shared<JuliaFragmentShader>( &m_c,&m_t));
 
 }
 
+
+void MyBlowWindow::_InitIMGUI() {
+    ImGui::StyleColorsDark();
+
+}
 
 void MyBlowWindow::processInput(float passTime, float deltaTime)  {
     if (isKeyDown(GLFW_KEY_W))

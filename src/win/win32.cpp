@@ -6,6 +6,9 @@
 #include "GLFW/glfw3.h"
 #include "log.h"
 #include "VulkanEnd.h"
+#include "imgui/imgui.h"
+#include "imgui/backends/imgui_impl_glfw.h"
+#include "imgui/backends/imgui_impl_opengl3.h"
 
 static const struct {
     float x, y;
@@ -125,6 +128,7 @@ namespace win {
         , m_data(nullptr)
     {
         _InitWindow( title, width, height);
+        _InitIMGUI();
     }
 
     bool BlowWindow::attachFrmaebuffer(std::shared_ptr<gpc::Framebuffer> fbo) {
@@ -270,7 +274,8 @@ namespace win {
 			glDrawArrays(GL_TRIANGLES, 0, 6);
         }
 
-
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glfwSwapBuffers(m_window);
         glfwPollEvents();
 
@@ -286,5 +291,21 @@ namespace win {
     void BlowWindow::_ScrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
     }
 
+    void BlowWindow::_InitIMGUI() {
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
+        //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+        //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+        // Setup Dear ImGui style
+        //ImGui::StyleColorsClassic();
+
+        ImGui::StyleColorsDark();
+        // Setup Platform/Renderer backends
+        ImGui_ImplGlfw_InitForOpenGL(m_window, true);
+        const char* glsl_version = "#version 150";
+        ImGui_ImplOpenGL3_Init(glsl_version);
+    }
 }
 

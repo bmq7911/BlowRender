@@ -5,6 +5,7 @@ add_executable( drawLine main.cpp Rasterizate.cpp RayTrace.cpp  )
 target_include_directories( drawLine PRIVATE "${CMAKE_CURRNET_SOURCE_DIR}"
                                              "${CMAKE_SOURCE_DIR}/src/core"
                                              "${CMAKE_SOURCE_DIR}/src"
+                                             "${CMAKE_SOURCE_DIR}/third/imgui"
                                              "${CMAKE_SOURCE_DIR}/third/glm"
                                              "${CMAKE_SOURCE_DIR}/third/glad")
 

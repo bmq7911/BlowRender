@@ -226,8 +226,8 @@ namespace gpc {
 
             //kH = (m_height - 1) / 2.0f;
             //kW = (m_width - 1) / 2.0f;
-            kH = (m_height ) / 2.0f;
-            kW = (m_width ) / 2.0f;
+            kH = (m_height -1 ) / 2.0f;
+            kW = (m_width -1 ) / 2.0f;
             p1_x = kW * (m_p1.pos.x + 1.0f);
             p1_y = kH * (m_p1.pos.y + 1.0f);
 
