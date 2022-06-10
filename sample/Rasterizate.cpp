@@ -1,8 +1,10 @@
 #include <iostream>
 #include "Rasterizate.h"
+
 #include "imgui/imgui.h"
 #include "imgui/backends/imgui_impl_glfw.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
+#include "SceneShader.h"
 
 
 class JuliaVertexShader : public gpc::VertexShader<glm::vec2, glm::vec4> {
@@ -72,14 +74,17 @@ void MyBlowWindow::tick(float passTime, float deltaTime)  {
     fbo->clearDepth(1.0f);
     const static float speed = 2.0f * 3.1415926f / 50.0f;
 
-    m_juliaPipeline->draw(gpc::PrimitiveType::kTriangle);
-    //m_container->tick(passTime, deltaTime);
-    //m_ruiRoot->tick(passTime, deltaTime);
+    
+    _tickScene( passTime, deltaTime );
 
     _tickIMGUI(passTime, deltaTime);
     
 }
 
+/// we tick the sence,but how to pass the pipeline
+void MyBlowWindow::_tickScene(float passTime, float deltaTime) {
+    
+}
 void MyBlowWindow::_tickIMGUI(float passTime, float deltaTime) {
     static float f = 0.0f;
     static int counter = 0;
@@ -113,64 +118,31 @@ void MyBlowWindow::_tickIMGUI(float passTime, float deltaTime) {
     ImGui::End();
 }
 
+
+
+
 void MyBlowWindow::initScene() {
     
-    m_texture = helper::TextureLoad().makeTexture2D("a.jpg");
+    m_texture = helper::TextureLoad().makeTexture2D("a.jpeg");
 
     m_camera = std::make_shared<gpc::MoveProjectionCamera>(60.0f, 800, 600, 0.1f, 10.0f, glm::vec3(0.0f, 0.0f, 10.0f));
     m_camera->setLookAt(glm::vec3(0.0f, 0.0f, 0.0f));
 
-    Vertex vertex[] = {
 
-        {{-1.0f, -1.0f, 0.0f,  },{1.0f,0.0f,0.0f},{0.0f,0.0f}},
-        {{1.0f, -1.0f, 0.0f,   },{0.0f,1.0f,0.0f},{1.0f,0.0f}},
-        {{1.0f,   1.0f, 0.0f, },{0.0f,0.0f,1.0f},{1.0f,1.0f}},
-        
-        {{1.0f,   1.0f, 0.0f, },{0.0f,0.0f,1.0f},{1.0f,1.0f}},
-        {{-1.0f,  1.0f, 0.0f, },{0.0f,0.0f,1.0f},{0.0f,1.0f}},
-        {{-1.0f,  -1.0f, 0.0f, },{0.0f,0.0f,1.0f},{0.0f,0.0f}},
+    auto model = helper::Model::parseModel( "cube.obj");
 
-    };
+    auto cube1= Model::createModel( model );
+    auto cube2 = Model::createModel(model);
 
-    m_vertexBuffer = std::make_shared<gpc::VertexBuffer<Vertex>>();
-    m_vertexBuffer->copyVertex(vertex, sizeof(vertex) / sizeof(vertex[0]));
-
-    std::vector<Vertex> line;
-    for (float i = 0; i < 599.0f; i += 10.0f) {
-        line.push_back({ {-1.0f,-1.0f,0.0f},{1.0f,0.0f,0.0} });
-        line.push_back({ {-0.7f, -1.0f + 2.0f * i / 600.0f,0.0f},{0.0f,1.0f,0.0} });
-    }
-
-    for (size_t i = 0; i < 100; ++i) {
-        line.push_back({ { -5.0f + i * 5.0f / 100.0f, -2.5f, 0.0f }, { 1.0f,0.0f,0.0f } });
-        line.push_back({ { 0.0f + i * 5.0f / 100.0f, 2.5f, 0.0f }, { 0.0f,0.0f,1.0f } });
-
-    }
+    m_scene->addObject(cube1);
+    m_scene->addObject(cube2);
     
-
-    m_vertexBufferLine = std::make_shared<gpc::VertexBuffer<Vertex>>();
-    m_vertexBufferLine->copyVertex(line.data(), line.size());
-
-
-    m_pipeline = std::make_shared<gpc::RasterizePipeline<Vertex, ShaderPass >>( m_device );
-
-
-
-    m_pipeline->bindVertexBuffer(m_vertexBuffer);
-    m_pipeline->bindFramebuffer(getFbo());
-    m_pipeline->bindVertexShader(std::make_shared<VertexShader>(m));
-
-    std::shared_ptr<FragmentShader> fs = std::make_shared<FragmentShader>(glm::vec3(200.0f, 200.0f, 10.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-    fs->texture = m_texture;
-    std::shared_ptr< ParallelLightFragmentShader> plfs = std::make_shared<ParallelLightFragmentShader>(glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-    m_pipeline->bindFragmentShader(fs);
-
-
     initAABB();
     _InitJuliaSence();
 }
 
 void MyBlowWindow::initAABB() {
+
     m_pv = std::make_shared<glm::mat4>();
     m_aabbVertex = std::make_shared<gpc::VertexBuffer<glm::vec3>>();
     m_aabbPipeline = std::make_shared<gpc::RasterizePipeline<glm::vec3, glm::vec3>>( m_device );
@@ -237,7 +209,6 @@ void MyBlowWindow::drawAABB( gpc::AABB const& aabb) {
     
 }
 
-
 void MyBlowWindow::_InitJuliaSence() {
 
     glm::fvec2 vertex[] = {
@@ -263,7 +234,6 @@ void MyBlowWindow::_InitJuliaSence() {
     m_juliaPipeline->bindFragmentShader(std::make_shared<JuliaFragmentShader>( &m_c,&m_t));
 
 }
-
 
 void MyBlowWindow::_InitIMGUI() {
     ImGui::StyleColorsDark();

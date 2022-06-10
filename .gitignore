@@ -1,4 +1,5 @@
 build/
 libs/
 third/
+bin/
 .vscode/
