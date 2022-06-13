@@ -3,6 +3,11 @@
 #include "scene.h"
 #include "Graphics/ProjectionCamera.h"
 #include "helper/ModelLoad.h"
+#include "SceneShader.h"
+#include "imgui/imgui.h"
+#include "imgui/backends/imgui_impl_glfw.h"
+#include "imgui/backends/imgui_impl_opengl3.h"
+
 
 class TestScene {
 public:
@@ -12,7 +17,7 @@ public:
 	{
 		m_camera = std::make_shared<gpc::MoveProjectionCamera>(60.0f, 800, 600, 0.1f, 10.0f);
 		m_camera->setLookAt(glm::vec3(0.0f, 0.0f, 0.0f));
-
+		m_scene = std::make_shared<gpc::scene>();
 		auto model = helper::Model::parseModel("cube.obj");
 		auto cube1 = Model::createModel(model);
 		auto cube2 = Model::createModel(model);
@@ -20,7 +25,7 @@ public:
 		m_scene->addObject(cube1);
 		m_scene->addObject(cube2);
 		
-		m_basicVertexShader = std::make_shared<BasicVertexShader>(&m_model, &m_modelT, m_view, m_proj, m_mvp);
+		m_basicVertexShader = std::make_shared<BasicVertexShader>(&m_model, &m_modelT, &m_view, &m_proj, &m_mvp);
 		m_pointLightFragmentShader = std::make_shared<PointLightFragmentShader>( &m_lightPos, &m_lightColor );
 		m_pipeline = std::make_shared<gpc::RasterizePipeline<helper::Vertex, helper::Vertex>>( device );
 
@@ -37,6 +42,7 @@ public:
 		auto beg = m_scene->begin();
 		auto end = m_scene->end();
 		for (; beg != end; ++beg) {
+			static_cast<Model*>(*beg)->tick( passTime, deltaTime );
 		//	(*beg)->
 		}
 
@@ -51,8 +57,8 @@ private:
 
 		ImGui::Begin("Scene info");                          // Create a window called "Hello, world!" and append into it.
 		
-		glm::vec3 cameraPos = m_camera->getPosition();
-		glm::vec3 cameraLookDir = m_camera->getLookDir();
+		glm::fvec3 cameraPos = m_camera->getPosition();
+		glm::fvec3 cameraLookDir = m_camera->getLookDir();
 		ImGui::InputFloat3("camera pos",(float*)(&cameraPos));
 		ImGui::InputFloat3("lookDir",(float*)(&cameraPos));
 		

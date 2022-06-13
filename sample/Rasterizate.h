@@ -149,6 +149,7 @@ private:
     std::shared_ptr<gpc::scene> m_scene;
     std::shared_ptr<gpc::Device> m_device;
     std::shared_ptr<rui::widget_tree>      m_ruiRoot;
+    std::shared_ptr<TestScene>             m_testScene;
     C<float> m_c;
     C<float> m_t;
 };

@@ -65,6 +65,7 @@ MyBlowWindow::MyBlowWindow(const char* title, uint32_t width, uint32_t height, s
     std::shared_ptr<gpc::Framebuffer> frame = std::make_shared<gpc::Framebuffer>(gpc::Framebuffer(width, height));
     m_ruiRoot = std::make_shared<rui::widget_tree>(device, frame);
     attachFrmaebuffer(frame);
+    m_testScene = std::make_shared<TestScene>(device, frame);
 }
 
 /// soft render
@@ -73,11 +74,10 @@ void MyBlowWindow::tick(float passTime, float deltaTime)  {
     fbo->clear({ 0,0,0,0 });
     fbo->clearDepth(1.0f);
     const static float speed = 2.0f * 3.1415926f / 50.0f;
-
+    m_testScene->tick(passTime, deltaTime);
     
-    _tickScene( passTime, deltaTime );
-
-    _tickIMGUI(passTime, deltaTime);
+    //_tickScene( passTime, deltaTime );
+    //_tickIMGUI(passTime, deltaTime);
     
 }
 
@@ -129,13 +129,6 @@ void MyBlowWindow::initScene() {
     m_camera->setLookAt(glm::vec3(0.0f, 0.0f, 0.0f));
 
 
-    auto model = helper::Model::parseModel( "cube.obj");
-
-    auto cube1= Model::createModel( model );
-    auto cube2 = Model::createModel(model);
-
-    m_scene->addObject(cube1);
-    m_scene->addObject(cube2);
     
     initAABB();
     _InitJuliaSence();

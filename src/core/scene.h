@@ -10,7 +10,7 @@
 
 namespace gpc{
     /// this class is very important for render
-    /// 
+    /// this scene just for ray trace
     class scene  {
     public:
         using iterator       = typename std::unordered_set<Object*>::iterator;
@@ -39,8 +39,8 @@ namespace gpc{
     private:
         glm::fvec3 m_lightDir;
 	    AABB       m_aabb;
-	    OTree<Object>* m_otree;
+	    OTree<Object>*              m_otree;
         std::unordered_set<Object*> m_objects;
-        std::vector<Light*>  m_lights;
+        std::vector<Light*>         m_lights;
     };
 }

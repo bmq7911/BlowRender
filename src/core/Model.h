@@ -14,9 +14,16 @@ public:
         m->m_ptrModel = model;
         return m;
     }
+
+    void tick(float passTime, float deltaTime) {
+        
+    }
+    
     bool hit(gpc::Ray const & ray, Float& t, glm::fvec3 &normal) const override {
         return false;
     }
+
+
     gpc::BVH const* getBVH() const override {
         return &m_aabb;
     }

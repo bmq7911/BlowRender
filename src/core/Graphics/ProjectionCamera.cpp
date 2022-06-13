@@ -38,5 +38,8 @@ namespace gpc {
 		m_right = glm::normalize(glm::cross(up, m_front));
 		m_up = glm::normalize(glm::cross(m_front, m_right));
 	}
+	glm::fvec3 ProjectionCamera::getLookDir() const {
+		return m_pos + m_front;
+	}
 }
 
