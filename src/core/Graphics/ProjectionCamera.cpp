@@ -2,6 +2,7 @@
 namespace gpc {
 	ProjectionCamera::ProjectionCamera(Float Zoom, uint32_t width, uint32_t height, Float Near, Float Far, glm::fvec3 position, glm::fvec3 lookAt, glm::fvec3 up) {
 		// View æÿ’Û–≈œ¢
+		m_at = lookAt;
 		m_pos = position;
 		m_front = glm::normalize(lookAt - position);
 		m_right = glm::normalize(glm::cross(up, m_front));
@@ -32,6 +33,11 @@ namespace gpc {
 		m_front = glm::normalize(at - m_pos);
 		m_right = glm::normalize(glm::cross(up, m_front));
 		m_up = glm::normalize(glm::cross(m_front, m_right));
+		m_at = at;
+	}
+
+	glm::fvec3 ProjectionCamera::getLookAt() const {
+		return m_at;
 	}
 	void ProjectionCamera::setLookDir(glm::fvec3 const& v) {
 		m_front = glm::normalize(v);
@@ -39,7 +45,7 @@ namespace gpc {
 		m_up = glm::normalize(glm::cross(m_front, m_right));
 	}
 	glm::fvec3 ProjectionCamera::getLookDir() const {
-		return m_pos + m_front;
+		return m_front;
 	}
 }
 

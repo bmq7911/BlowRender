@@ -20,6 +20,7 @@ namespace gpc {
 
         void copyVertex(V const* data, size_t n) {
             m_vertex.resize(n);
+            m_indexCount = n;
             memcpy(m_vertex.data(), data, n * sizeof(V));
         }
         void copyIndex(uint32_t const* data, size_t n) {
@@ -76,6 +77,7 @@ namespace gpc {
                 return p[i];
             }break;
             default:
+                return i;
                 break;
             }
             return size_t(-1);

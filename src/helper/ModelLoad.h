@@ -2,11 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <memory>
 #include <vector>
 #include <string>
 #include <unordered_map>
 #include "glm/glm.hpp"
 #include "Graphics/AABB.h"
+#include "Graphics/VertexBuffer.h"
 
 namespace std {
     template<>
@@ -91,6 +93,7 @@ namespace helper {
         const gpc::AABB& getAABB() const;
         const gpc::BVH* getBVH() const override;
         bool hit(gpc::Ray const& ray, Float& t, glm::fvec3& normal) const override;
+        std::shared_ptr<gpc::VertexBuffer<helper::Vertex>> getVertexBuffer() const;
         static Model* parseModel(const char* path);
         static Model* _BuildModel(std::vector<glm::fvec3>const& position, std::vector<glm::fvec3> const& normals,
             std::vector<glm::fvec2> const& texcoords, std::vector<glm::ivec3> const& faces,
@@ -99,6 +102,7 @@ namespace helper {
     private:
         std::vector<Mesh*> m_meshs;
         std::vector<helper::Vertex> m_vertexs;
+        std::shared_ptr<gpc::VertexBuffer<helper::Vertex>> m_vertexBuffer;
         gpc::AABB m_aabb;
     };
 

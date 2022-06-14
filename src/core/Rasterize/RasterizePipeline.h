@@ -84,7 +84,8 @@ namespace gpc {
         void init(uint32_t size) override { }
    
         uint32_t doTask(Tid3 const& tid) override{
-            _VI v = m_vertexBuffer->atVertex(tid.x);
+            
+            _VI v = m_vertexBuffer->at(tid.x);
             _FI fi;
             glm::vec4 pos = m_rasterizePipeline->_ExecuteVertexShader(v, fi);
             m_primitives[tid.x].data = fi;

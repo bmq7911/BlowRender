@@ -6,7 +6,7 @@
 class Model : public gpc::Object{
 public:
     static Model* createModel(helper::Model* model ) {
-        if (model) {
+        if (nullptr == model) {
             return nullptr;
         }
         Model* m = new Model();
@@ -14,7 +14,9 @@ public:
         m->m_ptrModel = model;
         return m;
     }
-
+    helper::Model* getModel() const {
+        return m_ptrModel;
+    }
     void tick(float passTime, float deltaTime) {
         
     }

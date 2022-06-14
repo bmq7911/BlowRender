@@ -15,8 +15,13 @@ public:
 		: m_device( device )
 		, m_fbo( fbo )
 	{
-		m_camera = std::make_shared<gpc::MoveProjectionCamera>(60.0f, 800, 600, 0.1f, 10.0f);
+		m_camera = std::make_shared<gpc::MoveProjectionCamera>(60.0f, 800, 600, 0.1f, 100.0f);
 		m_camera->setLookAt(glm::vec3(0.0f, 0.0f, 0.0f));
+
+		m_view = m_camera->to_view();
+		m_proj = m_camera->to_proj();
+		m_mvp = m_proj * m_view * m_model;
+
 		m_scene = std::make_shared<gpc::scene>();
 		auto model = helper::Model::parseModel("cube.obj");
 		auto cube1 = Model::createModel(model);
@@ -24,7 +29,9 @@ public:
 	
 		m_scene->addObject(cube1);
 		m_scene->addObject(cube2);
-		
+		m_lightPos = glm::fvec3(10.0f, 10.0f, 10.0f);
+		m_lightColor = glm::fvec3(1.0f, 0.0f, 0.0f);
+
 		m_basicVertexShader = std::make_shared<BasicVertexShader>(&m_model, &m_modelT, &m_view, &m_proj, &m_mvp);
 		m_pointLightFragmentShader = std::make_shared<PointLightFragmentShader>( &m_lightPos, &m_lightColor );
 		m_pipeline = std::make_shared<gpc::RasterizePipeline<helper::Vertex, helper::Vertex>>( device );
@@ -42,7 +49,12 @@ public:
 		auto beg = m_scene->begin();
 		auto end = m_scene->end();
 		for (; beg != end; ++beg) {
-			static_cast<Model*>(*beg)->tick( passTime, deltaTime );
+			Model* model = static_cast<Model*>(*beg);
+			if (nullptr != model) {
+				model->tick(passTime, deltaTime);
+				m_pipeline->bindVertexBuffer(model->getModel()->getVertexBuffer());
+				m_pipeline->draw(gpc::PrimitiveType::kTriangle);
+			}
 		//	(*beg)->
 		}
 
@@ -58,14 +70,19 @@ private:
 		ImGui::Begin("Scene info");                          // Create a window called "Hello, world!" and append into it.
 		
 		glm::fvec3 cameraPos = m_camera->getPosition();
-		glm::fvec3 cameraLookDir = m_camera->getLookDir();
+		glm::fvec3 cameraLookDir = m_camera->getLookAt();
 		ImGui::InputFloat3("camera pos",(float*)(&cameraPos));
-		ImGui::InputFloat3("lookDir",(float*)(&cameraPos));
-		
+		ImGui::InputFloat3("look at",(float*)(&cameraLookDir));
+		m_camera->setPositon(cameraPos);
+		m_camera->setLookAt( cameraLookDir);
 		
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::End();
 
+
+		m_view = m_camera->to_view();
+		m_proj = m_camera->to_proj();
+		m_mvp  = m_proj * m_view * m_model;
 
 
 	}

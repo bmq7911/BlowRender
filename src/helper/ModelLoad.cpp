@@ -34,6 +34,9 @@ namespace helper {
             return false;
         }
 
+        std::shared_ptr<gpc::VertexBuffer<helper::Vertex>> Model::getVertexBuffer() const {
+            return m_vertexBuffer;
+        }
 
         Model* Model::parseModel(const char* path) {
             if (nullptr == path)
@@ -119,6 +122,9 @@ namespace helper {
                 fclose(file);
                 return _BuildModel(pos, normals, texcoords, faces, tangent, joint, weight);
             }
+            
+            
+            
             return nullptr;
         }
 
@@ -163,9 +169,9 @@ namespace helper {
                         vertex.aWeight = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
                     }
                     vertexs.push_back(vertex);
-                    uint32_t index = static_cast<uint32_t>(vertexs.size() - 1);
-                    indices.push_back(index);
-                    map.insert(std::make_pair(face, index));
+                    //uint32_t index = static_cast<uint32_t>(vertexs.size() - 1);
+                    //indices.push_back(index);
+                    //map.insert(std::make_pair(face, index));
                 }
             }
 
@@ -176,6 +182,9 @@ namespace helper {
             model->m_aabb = make.getAABB();
             model->m_meshs.push_back(mesh);
             model->m_vertexs = std::move(vertexs);
+            model->m_vertexBuffer = std::make_shared<gpc::VertexBuffer<helper::Vertex>>();
+            model->m_vertexBuffer->copyVertex( model->m_vertexs.data(), model->m_vertexs.size() );
+            //model->m_vertexBuffer->copyIndex(mesh->m_index.data(), mesh->m_index.size());
             return model;
         }
 

@@ -14,6 +14,7 @@ namespace gpc {
 		glm::fmat4 to_proj() const override;
 		glm::fmat4 to_view() const override;
 		void setLookAt(glm::fvec3 const& vir);
+		glm::fvec3 getLookAt() const;
 		void setLookDir(glm::fvec3 const& dir);
 		glm::fvec3 getLookDir() const;
 		glm::fvec3 getXV() const;
@@ -25,6 +26,7 @@ namespace gpc {
 		glm::fvec3 m_up;
 		glm::fvec3 m_right;
 		glm::fvec3 up;
+		glm::fvec3 m_at;
 		Float m_xangle;
 		Float m_yangle;
 		Float m_near;
@@ -42,6 +44,9 @@ namespace gpc {
 		}
 		glm::fvec3 getPosition() const {
 			return m_pos;
+		}
+		void setPositon(glm::fvec3 const& pos) {
+			m_pos = pos;
 		}
 		void moveFront(Float deltaTime) {
 			m_pos += deltaTime * m_speed * m_front;

@@ -219,6 +219,7 @@ public:
     }
 
     glm::vec4 execute(gpc::fragment<helper::Vertex> const& primitive) {
+        return glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
         helper::Vertex const& v = primitive.data;
         glm::vec3 dir = glm::normalize( *lightPos- v.aPos);
         Float d = glm::dot(dir, v.aNormal);

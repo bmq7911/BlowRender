@@ -55,6 +55,7 @@ namespace gpc {
 
     Device::Device()
 		: m_bStop( false )
+		, m_bWait( true )
 	{
 		uint32_t size = std::thread::hardware_concurrency();
 		m_coreRunCount = size;
@@ -71,6 +72,7 @@ namespace gpc {
 		m_coreRunCount = uint32_t(m_executeCore.size());
 		m_taskIssues->init( m_coreRunCount );
 		m_wakeUpCore.notify_all();
+		//std::cout <<"&&&&&&" << std::endl;
 	}
 
 	void Device::wait() {
@@ -94,12 +96,19 @@ namespace gpc {
 			/// </summary>
 			std::unique_lock<std::mutex> locker(m_sleepMainThread);
 			///std::unique_lock<std::mutex> locker(m_sleepCore);
-			m_wakeUpMainThread.wait(locker);
+			m_wakeUpMainThread.wait(locker, [this]()-> bool {
+				return 0 == m_coreRunCount;
+			});
 		}
+		m_taskIssues = nullptr;
 	}
 	
 	void Device::_NotifyDeviceWorkDone() {
-		m_wakeUpMainThread.notify_one();
+		{
+			std::unique_lock<std::mutex> locker(m_sleepMainThread);
+		}
+		m_wakeUpMainThread.notify_one( );
+		//std::cout <<"******" << std::endl;
 	}
 
 	bool Device::_IsStop() const{
@@ -107,8 +116,9 @@ namespace gpc {
 	}
 
 	uint32_t Device::_DecreaseRunCount() {
-		--m_coreRunCount;
-		return m_coreRunCount.load( );
+		m_coreRunCount--;
+		std::cout << m_coreRunCount << std::endl;
+		return m_coreRunCount;
 	}
 
 	uint32_t Device::_DoWork(Tid3 const& tid) {

@@ -62,6 +62,7 @@ namespace gpc{
 		std::mutex                  m_sleepCore;
 		std::mutex                  m_sleepMainThread;
 		std::vector<std::shared_ptr<ExecuteCore>> m_executeCore;
+		bool m_bWait;
 
     };
 }
