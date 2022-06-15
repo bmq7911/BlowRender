@@ -23,17 +23,18 @@ public:
 		m_mvp = m_proj * m_view * m_model;
 
 		m_scene = std::make_shared<gpc::scene>();
-		auto model = helper::Model::parseModel("cube.obj");
+		auto model = helper::Model::parseModel("convexmesh.obj");
+		//auto model = helper::Model::parseModel("cube.obj");
 		auto cube1 = Model::createModel(model);
-		auto cube2 = Model::createModel(model);
+		//auto cube2 = Model::createModel(model);
 	
 		m_scene->addObject(cube1);
-		m_scene->addObject(cube2);
+		//m_scene->addObject(cube2);
 		m_lightPos = glm::fvec3(10.0f, 10.0f, 10.0f);
 		m_lightColor = glm::fvec3(1.0f, 0.0f, 0.0f);
-
+		m_viewPos = m_camera->getPosition();
 		m_basicVertexShader = std::make_shared<BasicVertexShader>(&m_model, &m_modelT, &m_view, &m_proj, &m_mvp);
-		m_pointLightFragmentShader = std::make_shared<PointLightFragmentShader>( &m_lightPos, &m_lightColor );
+		m_pointLightFragmentShader = std::make_shared<PointLightFragmentShader>( &m_lightPos, &m_lightColor,&m_viewPos );
 		m_pipeline = std::make_shared<gpc::RasterizePipeline<helper::Vertex, helper::Vertex>>( device );
 
 		m_pipeline->bindVertexShader(m_basicVertexShader);
@@ -45,7 +46,9 @@ public:
 	/// 光纤追踪实际比这个好写些
 	void tick(float passTime, float deltaTime) {
 		_tickIMGUI(passTime, deltaTime);
-
+		
+		m_pipeline->setEnableDepthTest(true);
+		m_pipeline->setEnableDepthWrite(true);
 		auto beg = m_scene->begin();
 		auto end = m_scene->end();
 		for (; beg != end; ++beg) {
@@ -73,6 +76,8 @@ private:
 		glm::fvec3 cameraLookDir = m_camera->getLookAt();
 		ImGui::InputFloat3("camera pos",(float*)(&cameraPos));
 		ImGui::InputFloat3("look at",(float*)(&cameraLookDir));
+		ImGui::InputFloat3("lightPos", (float*)(&m_lightPos));
+		ImGui::InputFloat3("lightColor", (float*)(&m_lightColor));
 		m_camera->setPositon(cameraPos);
 		m_camera->setLookAt( cameraLookDir);
 		
@@ -82,6 +87,7 @@ private:
 
 		m_view = m_camera->to_view();
 		m_proj = m_camera->to_proj();
+		m_viewPos = cameraPos;
 		m_mvp  = m_proj * m_view * m_model;
 
 
@@ -105,4 +111,5 @@ private:
 	glm::mat3 m_modelT;
 	glm::vec3 m_lightPos;
 	glm::vec3 m_lightColor;
+	glm::vec3 m_viewPos;
 };

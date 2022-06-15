@@ -349,11 +349,10 @@ namespace gpc {
             while (true == vertexDispatch.dispatch(e1, e2, e3)) {
                 /// 这个是在主线程之中做的,
                 /// 2.1 图元方向判定,进行剔除
-                glm::vec4 pos1 = e1.pos / e1.pos.w;
-                glm::vec4 pos2 = e2.pos / e2.pos.w;
-                glm::vec4 pos3 = e3.pos / e3.pos.w;
-                
-                int32_t z = _CounterClockWise( pos1, pos2, pos3 );
+                e1.pos /= e1.pos.w;
+                e2.pos /= e2.pos.w;
+                e3.pos /= e3.pos.w;
+                int32_t z = _CounterClockWise( e1.pos, e2.pos, e3.pos );
                 if (z == 0) { /// 三角形退化成线,我们选择不绘制
                     //LOG_TRACE("asembly triangle", "discard the primitive with the point on line");
                     return;
@@ -387,9 +386,9 @@ namespace gpc {
                 SutherlandHodgman sh(-1.0f, 1.0f, 1.0f, -1.0f);
                 glm::vec2 out[7];
                 primitive<_FI> ele[7];
-                out[0] = glm::vec2(pos1.x, pos1.y);
-                out[1] = glm::vec2(pos2.x, pos2.y);
-                out[2] = glm::vec2(pos3.x, pos3.y);
+                out[0] = glm::vec2(e1.pos.x, e1.pos.y);
+                out[1] = glm::vec2(e2.pos.x, e2.pos.y);
+                out[2] = glm::vec2(e3.pos.x, e3.pos.y);
 
                 size_t pointCount = sh.ClipTriangle(out, 3);
                 if (pointCount < 3) {
@@ -423,9 +422,7 @@ namespace gpc {
                         m_device->wait( );
                     }
                 }
-            
             }
-
         }
 
         template<typename Dispatch>

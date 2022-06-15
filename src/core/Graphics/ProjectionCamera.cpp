@@ -26,7 +26,7 @@ namespace gpc {
 	}
 
 	glm::fmat4 ProjectionCamera::to_view() const {
-		return glm::lookAt(m_pos, m_pos + m_front, m_up);
+		return glm::lookAt(m_pos, m_at, m_up);
 	}
 
 	void ProjectionCamera::setLookAt(glm::fvec3 const& at) {

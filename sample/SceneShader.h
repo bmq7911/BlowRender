@@ -193,8 +193,9 @@ public:
     glm::vec4 execute( helper::Vertex const& vertex, helper::Vertex & out) override {
         glm::vec4 t = (*mvp) * glm::vec4( vertex.aPos ,1.0f);
 
-        out.aPos     = glm::mat3((*model)) * vertex.aPos;
-        out.aNormal = glm::normalize(glm::vec3((*modelT) * vertex.aNormal));
+        out.aPos = glm::vec3((*model) * glm::vec4(vertex.aPos,1.0f));
+        out.aNormal  = glm::normalize(glm::vec3((*modelT) * vertex.aNormal));
+        //out.aNormal = vertex.aNormal;
         out.aTex     = vertex.aTex;
         out.aTangent = vertex.aTangent;
         out.aJoint   = vertex.aJoint;
@@ -211,26 +212,30 @@ private:
 
 class PointLightFragmentShader : public gpc::FragmentShader<helper::Vertex> {
 public:
-    PointLightFragmentShader( glm::vec3 * lightPos_, glm::vec3 * lightColor_)
+    PointLightFragmentShader( glm::vec3 * lightPos_, glm::vec3 * lightColor_,glm::vec3* view_)
         : lightPos(lightPos_)
         , lightColor( lightColor_)
+        , view(view_)
+        , ambientColor( 0.1f,0.1f,0.1f)
     {
     
     }
 
     glm::vec4 execute(gpc::fragment<helper::Vertex> const& primitive) {
-        return glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+        //return glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
         helper::Vertex const& v = primitive.data;
         glm::vec3 dir = glm::normalize( *lightPos- v.aPos);
-        Float d = glm::dot(dir, v.aNormal);
-        if (d < 0.0f) {
-            return glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-        }
-        else {
-            return glm::vec4( d * (* lightColor), 1.0f);
-        }
+        Float d = std::max(0.0f, glm::dot(dir, v.aNormal));
+        glm::vec3 r = glm::reflect(-dir, v.aNormal);
+        glm::vec3 vi = (*view) - v.aPos;
+
+        Float s = pow(std::max(glm::dot(r, vi), 0.0f), 10);
+        auto t =  glm::vec4( (d * (*lightColor -ambientColor) ) +  ambientColor +  s * ( * lightColor - ambientColor), 1.0f);
+        return glm::vec4(std::min(1.0f, t.x), std::min(1.0f, t.y), std::min(1.0f, t.z), 1.0f);
     }
 private:
     glm::vec3* lightPos;
     glm::vec3* lightColor;
+    glm::vec3* view;
+    glm::vec3  ambientColor;
 };
