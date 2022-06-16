@@ -85,6 +85,7 @@ void MyBlowWindow::tick(float passTime, float deltaTime)  {
 void MyBlowWindow::_tickScene(float passTime, float deltaTime) {
     
 }
+
 void MyBlowWindow::_tickIMGUI(float passTime, float deltaTime) {
     static float f = 0.0f;
     static int counter = 0;
@@ -207,11 +208,11 @@ void MyBlowWindow::_InitJuliaSence() {
     glm::fvec2 vertex[] = {
         {-1.0f, -1.0f },
         {1.0f,  -1.0f },
-        {1.0f,   1.0f},
+        {1.0f,   1.0f },
 
         {1.0f,   1.0f },
-        {-1.0f,  1.0f},
-        {-1.0f, -1.0f},
+        {-1.0f,  1.0f },
+        {-1.0f, -1.0f },
 
     };
 

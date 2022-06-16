@@ -400,7 +400,6 @@ namespace gpc {
                     auto draw = [this](fragment<_FI> const& e) {
                         _Draw(e);
                     };
-
                     size_t primitiveCount = 0;
                     for (size_t i = 1; i < pointCount - 1; ++i) {
                         ele[0].pos.x = out[0].x;
@@ -483,6 +482,12 @@ namespace gpc {
             icolor.g = int8_t(255.0f * fcolor.g + 0.5f);
             icolor.b = int8_t(255.0f * fcolor.b + 0.5f);
             icolor.a = int8_t(255.0f * fcolor.a + 0.5f);
+            //if (fcolor.r > 1.0f|| fcolor.g > 1.0f || fcolor.b > 1.0f ) {
+            //    icolor.r = 0;
+            //    icolor.g = 1;
+            //    icolor.b = 0;
+            //    std::cout <<"greater" << std::endl;
+            //}
             return icolor;
         }
 

@@ -33,6 +33,7 @@ struct Vertex {
         return *this;
     }
 };
+
 static inline Vertex operator*(float k, Vertex const& p) {
     return p * k;
 }
@@ -218,20 +219,18 @@ public:
         , view(view_)
         , ambientColor( 0.1f,0.1f,0.1f)
     {
-    
     }
 
     glm::vec4 execute(gpc::fragment<helper::Vertex> const& primitive) {
-        //return glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
         helper::Vertex const& v = primitive.data;
         glm::vec3 dir = glm::normalize( *lightPos- v.aPos);
         Float d = std::max(0.0f, glm::dot(dir, v.aNormal));
-        glm::vec3 r = glm::reflect(-dir, v.aNormal);
-        glm::vec3 vi = (*view) - v.aPos;
+        glm::vec3 r = glm::normalize(glm::reflect(-dir, v.aNormal));
+        glm::vec3 vi = glm::normalize((*view) - v.aPos);
 
         Float s = pow(std::max(glm::dot(r, vi), 0.0f), 10);
-        auto t =  glm::vec4( (d * (*lightColor -ambientColor) ) +  ambientColor +  s * ( * lightColor - ambientColor), 1.0f);
-        return glm::vec4(std::min(1.0f, t.x), std::min(1.0f, t.y), std::min(1.0f, t.z), 1.0f);
+        auto t = glm::vec4(0.5f * s * *lightColor + ambientColor + 0.5f* d* (* lightColor), 1.0f);
+        return t;
     }
 private:
     glm::vec3* lightPos;
