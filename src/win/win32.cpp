@@ -144,9 +144,18 @@ namespace win {
     }
     
     void BlowWindow::tick( float passTime, float deltaTime) {
+        _ClearFrame( );
+        _DrawDataToFrame( );
+        if (true == tickUI( passTime, deltaTime )) {
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        }
         _SwapFrame();
     }
 
+    bool BlowWindow::tickUI(float passTime, float deltaTime) {
+        return false;
+    }
     void BlowWindow::beforeTick(float passTime, float deltaTime) {
     
     }
@@ -259,23 +268,28 @@ namespace win {
         return true;
     }
     
-    void BlowWindow::_SwapFrame() {
+    void BlowWindow::_ClearFrame() {
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glViewport(0, 0, m_width, m_height);
         glClear(GL_COLOR_BUFFER_BIT);
         
+    }
+
+    void BlowWindow::_DrawDataToFrame() {
         if (m_attchFramebuffer && nullptr != m_data) {
             m_attchFramebuffer->toData(m_data);
-			glUseProgram(m_program);
-            glTextureSubImage2D( m_texture2d, 0,0,0, m_width,m_height, GL_RGBA, GL_UNSIGNED_BYTE, m_data);
+            glUseProgram(m_program);
+            glTextureSubImage2D(m_texture2d, 0, 0, 0, m_width, m_height, GL_RGBA, GL_UNSIGNED_BYTE, m_data);
             glBindTexture(GL_TEXTURE_2D, m_texture2d);
             glActiveTexture(GL_TEXTURE0);
-			glBindVertexArray( m_VAO);
-			glDrawArrays(GL_TRIANGLES, 0, 6);
+            glBindVertexArray(m_VAO);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
         }
+    }
+    void BlowWindow::_SwapFrame() {
+        
 
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         glfwSwapBuffers(m_window);
         glfwPollEvents();
 

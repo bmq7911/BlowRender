@@ -40,8 +40,10 @@ namespace gpc {
         auto obj = m_scene->hit(ray, length, normal);
         if (nullptr != obj) {
             if (m_scene->isLight(obj)) {
+                gpc::Light* light = static_cast<gpc::Light*>(obj);
+                light->getLightColor( );
                 /// 遇到光源了,说明会被照亮,这里我们如何计算这个信息呢,第一种也就是碰撞表
-                
+                return glm::fvec4(1.0, 0, 0, 1.0);
                 /// 
             }
             else { /// 没遇到光源
@@ -51,6 +53,7 @@ namespace gpc {
                 return collectColor(rray, t, normal);
             }
         }
+        return glm::fvec4(0.0, 0.0, 0.0, 0.0);
     }
 
     uint32_t RayTracePipeline::doTask(Tid3 const& tid) {
@@ -64,7 +67,8 @@ namespace gpc {
 
 
     bool RayTracePipeline::greaterRayMaxDistance(Float t) const {
-        return true;
+        //return true;
+        return false;
     }
 
     Dim3 RayTracePipeline::getTaskDim() const{

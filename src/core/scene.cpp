@@ -75,7 +75,8 @@ namespace gpc {
         return nullptr;
     }
     bool scene::isLight(Object* obj) {
-        return false;
+        //return false;
+        return true;
     }
     Object* scene::_HitObject(OTree<Object>* node,
         Ray const& ray, Float& t, glm::fvec3& normal) {

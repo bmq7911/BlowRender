@@ -16,6 +16,7 @@ namespace win {
         bool attachFrmaebuffer( std::shared_ptr<gpc::Framebuffer> fbo);
         std::shared_ptr<gpc::Framebuffer> getFbo();
         virtual void tick( float passTime, float deltaTime);
+        virtual bool tickUI(float passTime, float deltaTime);
         virtual void beforeTick(float passTime, float deltaTime);
         virtual void afterTick(float passTime, float deltaTime);
         virtual void processInput( float passTime, float deltaTime);
@@ -26,6 +27,8 @@ namespace win {
         static void _ErrorCallback(int error, const char* description);
         static void _KeyCallback( GLFWwindow* window, int key, int scancode, int action, int mods);
         bool _InitWindow(const char* title, uint32_t width, uint32_t  height);
+        void _ClearFrame();
+        void _DrawDataToFrame();
         void _SwapFrame();
         static void _MouseCallback(GLFWwindow* window, double xpos, double ypos);
         static void _ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);

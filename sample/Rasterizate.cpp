@@ -81,6 +81,9 @@ void MyBlowWindow::tick(float passTime, float deltaTime)  {
     
 }
 
+bool MyBlowWindow::tickUI(float passTime, float deltaTime) {
+    return true;
+}
 /// we tick the sence,but how to pass the pipeline
 void MyBlowWindow::_tickScene(float passTime, float deltaTime) {
     

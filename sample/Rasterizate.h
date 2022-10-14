@@ -118,6 +118,7 @@ class MyBlowWindow : public win::BlowWindow {
 public:
     MyBlowWindow(const char* title, uint32_t width, uint32_t height, std::shared_ptr<gpc::Device> device);
     void tick(float passTime, float deltaTime) override;
+    bool tickUI(float passTime, float deltaTime) override;
     void initScene();
     void initAABB();
     void drawAABB( gpc::AABB const & aabb);

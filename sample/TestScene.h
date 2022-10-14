@@ -3,6 +3,7 @@
 #include "scene.h"
 #include "Graphics/ProjectionCamera.h"
 #include "helper/ModelLoad.h"
+#include "helper/TextureLoad.h"
 #include "SceneShader.h"
 #include "imgui/imgui.h"
 #include "imgui/backends/imgui_impl_glfw.h"
@@ -17,7 +18,7 @@ public:
 	{
 		m_camera = std::make_shared<gpc::MoveProjectionCamera>(60.0f, 800, 600, 0.1f, 100.0f);
 		m_camera->setLookAt(glm::vec3(0.0f, 0.0f, 0.0f));
-
+		m_texture2d = helper::TextureLoad().makeTexture2D( "a.jpg");
 		m_view = m_camera->to_view();
 		m_proj = m_camera->to_proj();
 		m_mvp = m_proj * m_view * m_model;
@@ -102,6 +103,7 @@ private:
 
 	std::shared_ptr<gpc::MoveProjectionCamera>                             m_camera;
 	std::shared_ptr<gpc::scene>                                            m_scene;
+	std::shared_ptr<gpc::Texture2d>                                        m_texture2d;
 
 	glm::mat4 m_model;
 	glm::mat4 m_view;

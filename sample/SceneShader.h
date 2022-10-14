@@ -1,6 +1,7 @@
 #pragma once
-#include "Graphics/VertexShader.h"
 #include <glm/glm.hpp>
+#include "Graphics/VertexShader.h"
+#include "Graphics/Texture.h"
 
 struct Vertex {
     glm::vec3 aPos;
